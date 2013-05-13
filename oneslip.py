@@ -1,0 +1,54 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+#
+# oneslip - pywebkitgtk web applications viewer
+# Copyright (C) 2013  Giuseppe "GsC_RuL3Z" Corti
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ 
+import gtk
+import webkit
+import sys
+import string
+ 
+class GUI():
+	def __init__(self, donotshow=False):
+		self.window = gtk.Window()
+		#window.set_title("lol")
+		view = webkit.WebView()
+		view.open(sys.argv[1])
+		self.window.add(view)
+		view.set_size_request(int(size[0]), int(size[1]))
+		self.window.show_all()
+		view.connect("load-finished", self._view_load_finished_cb)
+		self.window.connect('delete-event', lambda window, event: gtk.main_quit())
+
+	def _view_load_finished_cb(self, view, frame):
+		title = frame.get_title()
+		if not title:
+			title = frame.get_uri()
+		if title:
+			self.window.set_title(title)
+
+if __name__ == "__main__":
+	if len(sys.argv) < 2:
+		sys.exit("Usage: %s (URL) (width)x(height)" % sys.argv[0])
+
+	size = string.split(sys.argv[2],'x')
+
+	if size[0].isdigit() == False or size[1].isdigit() == False:
+		sys.exit("%s isn't a valid size" % sys.argv[2])
+
+	g = GUI()
+	gtk.main()
