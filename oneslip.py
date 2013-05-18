@@ -16,29 +16,47 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
- 
-import gtk
-import webkit
+
+import gi
+gi.require_version('Gtk', '3.0')
+gi.require_version('WebKit', '3.0')
+
+from gi.repository import Soup, WebKit, Gtk
+
 import sys
 import string
- 
+import os
+
+COOKIEDIR = os.getenv('HOME') + "/.cookie/cookies.txt"
+
 class GUI():
 	def __init__(self, donotshow=False):
-		self.window = gtk.Window()
-		#window.set_title("lol")
-		view = webkit.WebView()
-		view.open(sys.argv[1])
-		self.window.add(view)
-		view.set_size_request(int(size[0]), int(size[1]))
+
+		self.window = Gtk.Window()
+		self.view = WebKit.WebView()
+
+		# Cookie support
+		cookiejar = Soup.CookieJarText.new(COOKIEDIR,False)
+		cookiejar.set_accept_policy(Soup.CookieJarAcceptPolicy.ALWAYS)
+		session = WebKit.get_default_session()
+		session.add_feature(cookiejar)
+
+		self.view.open(sys.argv[1])
+		
+		self.view.set_size_request(int(size[0]), int(size[1]))
+		self.window.add(self.view)
 		self.window.show_all()
-		view.connect("load-finished", self._view_load_finished_cb)
-		self.window.connect('delete-event', lambda window, event: gtk.main_quit())
+		self.view.connect("load-finished", self._view_load_finished_cb)
+		self.window.connect('delete-event', lambda window, event: Gtk.main_quit())
+
+
 
 	def _view_load_finished_cb(self, view, frame):
 		title = frame.get_title()
 		if not title:
 			title = frame.get_uri()
 		if title:
+			# Set web page title as Gtk Window title
 			self.window.set_title(title)
 
 if __name__ == "__main__":
@@ -51,4 +69,4 @@ if __name__ == "__main__":
 		sys.exit("%s isn't a valid size" % sys.argv[2])
 
 	g = GUI()
-	gtk.main()
+	Gtk.main()
