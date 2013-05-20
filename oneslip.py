@@ -17,11 +17,11 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import gi
-gi.require_version('Gtk', '3.0')
-gi.require_version('WebKit', '3.0')
+#import gi
+#gi.require_version('Gtk', '3.0')
+#gi.require_version('WebKit', '3.0')
 
-from gi.repository import Soup, WebKit, Gtk
+from gi.repository import Soup, WebKit2, Gtk
 
 import sys
 import string
@@ -33,22 +33,23 @@ class GUI():
 	def __init__(self, donotshow=False):
 
 		self.window = Gtk.Window()
-		self.view = WebKit.WebView()
+		#self.window.set_resizable(False)
+		view = WebKit2.WebView()
 
 		# Cookie support
-		cookiejar = Soup.CookieJarText.new(COOKIEDIR,False)
-		cookiejar.set_accept_policy(Soup.CookieJarAcceptPolicy.ALWAYS)
-		session = WebKit.get_default_session()
-		session.add_feature(cookiejar)
+		#cookiejar = Soup.CookieJarText.new(COOKIEDIR,False)
+		#cookiejar.set_accept_policy(Soup.CookieJarAcceptPolicy.ALWAYS)
+		#session = WebKit2.get_default_session()
+		#session.add_feature(cookiejar)
 
-		self.view.open(sys.argv[1])
+		view.load_uri(sys.argv[1])
 		
-		self.view.set_size_request(int(size[0]), int(size[1]))
-		self.window.add(self.view)
+		self.window.add(view)
+		view.set_size_request(int(size[0]), int(size[1]))
+		#self.window.set_size_request(int(size[0]), int(size[1]))
 		self.window.show_all()
-		self.view.connect("load-finished", self._view_load_finished_cb)
+		#view.connect("load-finished", self._view_load_finished_cb)
 		self.window.connect('delete-event', lambda window, event: Gtk.main_quit())
-
 
 
 	def _view_load_finished_cb(self, view, frame):
