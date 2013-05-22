@@ -17,15 +17,12 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#import gi
-#gi.require_version('Gtk', '3.0')
-#gi.require_version('WebKit', '3.0')
-
-from gi.repository import Soup, WebKit2, Gtk
+from gi.repository import WebKit2, Gtk
 
 import sys
 import string
 import os
+
 COOKIEDIR = os.getenv('HOME') + "/.cookie/cookies.txt"
 
 class GUI():
@@ -34,14 +31,13 @@ class GUI():
 		self.window = Gtk.Window()
 		#self.window.set_resizable(False)
 		self.view = WebKit2.WebView()
-		self.cookie = WebKit2.CookieManager()
 
 		# Cookie support
-		#self.cookie.set_persistent_storage(COOKIEDIR,)
-		#cookiejar = Soup.CookieJarText.new(COOKIEDIR,False)
-		#cookiejar.set_accept_policy(Soup.CookieJarAcceptPolicy.ALWAYS)
-		#session = WebKit2.get_default_session()
-		#session.add_feature(cookiejar)
+		context = self.view.get_context()
+		self.cookie = context.get_cookie_manager()
+		self.cookie.set_persistent_storage(COOKIEDIR,WebKit2.CookiePersistentStorage.TEXT)
+		self.cookie.set_accept_policy(WebKit2.CookieAcceptPolicy.ALWAYS)
+
 
 		self.view.load_uri(sys.argv[1])
 		
@@ -68,7 +64,7 @@ class GUI():
 			self.window.set_title(title)
 
 if __name__ == "__main__":
-	if len(sys.argv) < 2:
+	if len(sys.argv) < 3:
 		sys.exit("Usage: %s (URL) (width)x(height)" % sys.argv[0])
 
 	size = string.split(sys.argv[2],'x')
