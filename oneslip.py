@@ -26,7 +26,6 @@ from gi.repository import Soup, WebKit2, Gtk
 import sys
 import string
 import os
-
 COOKIEDIR = os.getenv('HOME') + "/.cookie/cookies.txt"
 
 class GUI():
@@ -34,28 +33,36 @@ class GUI():
 
 		self.window = Gtk.Window()
 		#self.window.set_resizable(False)
-		view = WebKit2.WebView()
+		self.view = WebKit2.WebView()
+		self.cookie = WebKit2.CookieManager()
 
 		# Cookie support
+		#self.cookie.set_persistent_storage(COOKIEDIR,)
 		#cookiejar = Soup.CookieJarText.new(COOKIEDIR,False)
 		#cookiejar.set_accept_policy(Soup.CookieJarAcceptPolicy.ALWAYS)
 		#session = WebKit2.get_default_session()
 		#session.add_feature(cookiejar)
 
-		view.load_uri(sys.argv[1])
+		self.view.load_uri(sys.argv[1])
 		
-		self.window.add(view)
-		view.set_size_request(int(size[0]), int(size[1]))
-		#self.window.set_size_request(int(size[0]), int(size[1]))
+		self.window.add(self.view)
+		self.view.set_size_request(int(size[0]), int(size[1]))
+
 		self.window.show_all()
-		#view.connect("load-finished", self._view_load_finished_cb)
+		self.view.connect("load-changed", self.load_finished)
+		self.view.connect("load-failed", self.load_failed)
+
+
 		self.window.connect('delete-event', lambda window, event: Gtk.main_quit())
 
+	def load_failed(self, view, frame):
+		self.window.set_title("Error!")
+		#self.view.load.uri()
 
-	def _view_load_finished_cb(self, view, frame):
-		title = frame.get_title()
+	def load_finished(self, view, frame):
+		title = self.view.get_title()
 		if not title:
-			title = frame.get_uri()
+			title = self.view.get_uri()
 		if title:
 			# Set web page title as Gtk Window title
 			self.window.set_title(title)
