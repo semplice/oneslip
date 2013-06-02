@@ -89,13 +89,13 @@ if __name__ == "__main__":
 	if protocol == "file":
 		# Check if file exist
 		if os.path.exists(sys.argv[1][7:])==False:
-			sys.argv[1] = "file://" + RESDIR + "/errors/nofile.html" # Web application not found
+			sys.argv[1] = "file://" + RESDIR + "/messages/errors/nofile.html" # Web application not found
 
 	else:
 		# Check if server is reachable
 		if internet_on(sys.argv[1])==False:
 			print "no connection"
-			sys.argv[1] = "file://" + RESDIR + "/errors/noconnection.html" # No network connection
+			sys.argv[1] = "file://" + RESDIR + "/messages/errors/noconnection.html" # No network connection
 
 	g = GUI()
 	Gtk.main()
