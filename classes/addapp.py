@@ -72,4 +72,4 @@ Terminal=false
 Type=Application
 Categories=%(cat)s""" % {"name":name, "exec":execute, "cat":cat})
 
-		return true
+		return True
