@@ -43,7 +43,7 @@ class GUI():
 		self.view.load_uri(url)
 		
 		self.window.add(self.view)
-		self.view.set_size_request(int(height), int(width))
+		self.view.set_size_request(int(width), int(height))
 
 		self.window.show_all()
 		self.view.connect("load-changed", self.load_finished)
