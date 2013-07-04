@@ -51,8 +51,10 @@ if __name__ == "__main__":
 
 		categ = dic[lst[int(cat)]]
 
-		if(addapp.createdesktop(name,url,size,dic[lst[i]])):
-			print "Web application added to your desktop"
+		#print categ
+
+		if(addapp.createdesktop(name,url,size,addapp.getTruecat(categ))):
+			print "Web application added to your menu"
 
 	if sys.argv[1]=="gtk":
 		# GTK interface 

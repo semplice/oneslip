@@ -20,8 +20,9 @@
 import os
 import gmenu
 
-#DESKTOPDIR = os.getenv("HOME") + "/.local/share/applications"
-DESKTOPDIR = os.getenv("HOME")
+#DESKTOPDIR = "/usr/share/applications"
+DESKTOPDIR = os.getenv("HOME") + "/.local/share/applications"
+#DESKTOPDIR = os.getenv("HOME")
 class addapp:
 
 	def getcat(self):
@@ -60,7 +61,7 @@ class addapp:
 	def createdesktop(self, name, url, size, cat):
 		""" Create a .desktop in DESKTOPDIR """
 
-		with open(os.path.join(DESKTOPDIR, name +".desktop"), "a") as target:
+		with open(os.path.join(DESKTOPDIR, "oneslip-" + name +".desktop"), "w") as target:
 
 			execute = "oneslip " + url + " " + size
 
