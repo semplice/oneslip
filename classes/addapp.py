@@ -35,6 +35,11 @@ class addapp:
 	def getFavicon(self,url):
 		""" Try to get favicon from website """
 
+		if url[-1:] == "/":
+			# Remove last char if it is "/"
+			url = url[:-1]
+			print url
+
 		# Add http:// to url
 		if url[:7]=="http://":
 			name = url[7:]
@@ -57,8 +62,13 @@ class addapp:
 			icon_link = soup.find("link", rel="icon")
 
 		else:
-			# fallback icon 
-			return "applications-internet"
+			if urllib2.urlopen(url + "/favicon.ico"):
+				# Try to find favicon
+				icon_link = {}
+				icon_link['href'] = url + "/favicon.ico"
+			else:
+				# fallback icon 
+				return "applications-internet"
 
 		#print icon_link
 
