@@ -25,14 +25,29 @@ import os
 import urllib2
 
 COOKIEDIR = os.getenv('HOME') + "/.oneslip/cookies/cookies.txt"
+FAVICONDIR = os.getenv('HOME') + "/.oneslip/favicons/"
 
 class GUI():
 
 	def __init__(self, width, height, url):
 
+
 		self.window = Gtk.Window()
 		#self.window.set_resizable(False)
 		self.view = WebKit2.WebView()
+
+		# Favicon
+
+		icon = self.getIcon(url)
+
+		if not icon: 
+			# Set fallback icon
+			self.window.set_icon_name("applications-internet")
+
+		else:
+			# Set favicon as icon
+			self.window.set_icon_from_file(icon)
+
 
 		# Cookie support
 		context = self.view.get_context()
@@ -63,3 +78,26 @@ class GUI():
 		if title:
 			# Set web page title as Gtk Window title
 			self.window.set_title(title)
+
+	def getIcon(self, url):
+		""" Get icon from FAVICONDIR """
+		if url[-1:] == "/":
+			# Remove last char if it is "/"
+			name = url[:-1]
+			
+		# Remove http:// to url
+		if url[:7]=="http://":
+			name = url[7:]
+		elif url[:8]=="https://":
+			name = url[8:]
+		else:
+			name = url
+
+		iconstr = FAVICONDIR + name + ".png"
+
+		try:
+   			with open(iconstr): pass
+		except IOError:
+   			return False
+
+   		return iconstr

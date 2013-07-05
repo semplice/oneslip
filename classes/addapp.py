@@ -41,7 +41,7 @@ class addapp:
 		if url[-1:] == "/":
 			# Remove last char if it is "/"
 			url = url[:-1]
-			print url
+			#print url
 
 		# Add http:// to url
 		if url[:7]=="http://":
