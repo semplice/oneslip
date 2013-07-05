@@ -59,6 +59,7 @@ class addapp:
 
 		# Convert favicon to png
 		img = Image.open(icostr)
+		img.convert('RGBA')
 		img.save(pngstr)
 
 		return pngstr
