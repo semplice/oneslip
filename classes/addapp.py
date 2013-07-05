@@ -19,6 +19,7 @@
 
 import os
 import gmenu
+import string
 
 #DESKTOPDIR = "/usr/share/applications"
 DESKTOPDIR = os.getenv("HOME") + "/.local/share/applications"
@@ -57,6 +58,30 @@ class addapp:
 
 		return dic[cat]
 
+	def check(self, name, url, size, cat):
+		""" check user input """
+
+		name.replace(" ", "")
+
+		if name == "":
+			return False
+
+		if url[7:]!="http://":
+			url = "http://" + url
+
+		# decode size
+		sized = string.split(size,'x')
+
+		if len(sized)!=2:
+			return False
+
+		if int(sized[0])<0 and int(sized[1])<0:
+			return False
+
+		if int(cat)<0 and int(cat)>11:
+			return False
+
+		return True
 
 	def createdesktop(self, name, url, size, cat):
 		""" Create a .desktop in DESKTOPDIR """

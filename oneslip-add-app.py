@@ -45,13 +45,13 @@ if __name__ == "__main__":
 
 		for i in range(0,len(lst)):
 			print str(i) + ") " + lst[i]
-			#print dic[lst[i]]
 
 		cat = raw_input("your choice: ")
 
-		categ = dic[lst[int(cat)]]
+		if not addapp.check(name,url,size,cat):
+			sys.exit("Error: invalid inputs")
 
-		#print categ
+		categ = dic[lst[int(cat)]]
 
 		if(addapp.createdesktop(name,url,size,addapp.getTruecat(categ))):
 			print "Web application added to your menu"
