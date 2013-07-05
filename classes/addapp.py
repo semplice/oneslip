@@ -21,6 +21,9 @@ import os
 import gmenu
 import string
 import  urllib2
+
+import t3rdparty.Win32IconImagePlugin
+
 from BeautifulSoup import BeautifulSoup 
 from PIL import Image
 
