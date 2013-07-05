@@ -24,7 +24,7 @@ import string
 import os
 import urllib2
 
-COOKIEDIR = os.getenv('HOME') + "/.cookie/cookies.txt"
+COOKIEDIR = os.getenv('HOME') + "/.oneslip/cookies/cookies.txt"
 
 class GUI():
 

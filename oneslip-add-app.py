@@ -51,9 +51,14 @@ if __name__ == "__main__":
 		if not addapp.check(name,url,size,cat):
 			sys.exit("Error: invalid inputs")
 
+		print "Trying to get favicon..."
+		favicon = addapp.getFavicon(url)
+		print "done!\n"
+		
+
 		categ = dic[lst[int(cat)]]
 
-		if(addapp.createdesktop(name,url,size,addapp.getTruecat(categ))):
+		if addapp.createdesktop(name,url,size,addapp.getTruecat(categ),favicon):
 			print "Web application added to your menu"
 
 	if sys.argv[1]=="gtk":

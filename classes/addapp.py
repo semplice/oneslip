@@ -20,11 +20,48 @@
 import os
 import gmenu
 import string
+import  urllib2
+from BeautifulSoup import BeautifulSoup 
+from PIL import Image
 
 #DESKTOPDIR = "/usr/share/applications"
 DESKTOPDIR = os.getenv("HOME") + "/.local/share/applications"
 #DESKTOPDIR = os.getenv("HOME")
+FAVICONDIR = os.getenv("HOME") + "/.oneslip/favicons/"
+
+
 class addapp:
+
+	def getFavicon(self,url):
+		""" Try to get favicon from website """
+
+		if url[:7]=="http://":
+			name = url[7:]
+		elif url[:8]=="https://":
+			name = url[8:]
+		else:
+			name = url
+			url = "http://" + url
+		#print url
+
+		page = urllib2.urlopen(url)
+		soup = BeautifulSoup(page.read())
+		icon_link = soup.find("link", rel="shortcut icon")
+
+		if icon_link['href'][:2]=="//": # URL Fix
+			icon_link['href']="http:"+icon_link['href']
+
+		icon = urllib2.urlopen(icon_link['href'])
+		icostr = "/tmp/" + name + ".ico"
+		pngstr = FAVICONDIR + name + ".png"
+		with open(icostr, "wb") as f:
+			f.write(icon.read())
+
+		# Convert favicon to png
+		img = Image.open(icostr)
+		img.save(pngstr)
+
+		return pngstr
 
 	def getcat(self):
 		""" Return a dictionary with the applications categories available """
@@ -66,7 +103,7 @@ class addapp:
 		if name == "":
 			return False
 
-		if url[7:]!="http://":
+		if url[:7]!="http://":
 			url = "http://" + url
 
 		# decode size
@@ -83,7 +120,7 @@ class addapp:
 
 		return True
 
-	def createdesktop(self, name, url, size, cat):
+	def createdesktop(self, name, url, size, cat, icon):
 		""" Create a .desktop in DESKTOPDIR """
 
 		with open(os.path.join(DESKTOPDIR, "oneslip-" + name +".desktop"), "w") as target:
@@ -96,6 +133,7 @@ Name=%(name)s
 Exec=%(exec)s
 Terminal=false
 Type=Application
-Categories=%(cat)s""" % {"name":name, "exec":execute, "cat":cat})
+Icon=%(icon)s
+Categories=%(cat)s""" % {"name":name, "exec":execute, "cat":cat, "icon":icon})
 
 		return True
