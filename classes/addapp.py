@@ -35,6 +35,7 @@ class addapp:
 	def getFavicon(self,url):
 		""" Try to get favicon from website """
 
+		# Add http:// to url
 		if url[:7]=="http://":
 			name = url[7:]
 		elif url[:8]=="https://":
@@ -46,10 +47,28 @@ class addapp:
 
 		page = urllib2.urlopen(url)
 		soup = BeautifulSoup(page.read())
-		icon_link = soup.find("link", rel="shortcut icon")
+
+		if soup.find("link", rel="shortcut icon"):
+			# Generic favicon
+			icon_link = soup.find("link", rel="shortcut icon")
+
+		elif soup.find("link", rel="icon"):
+			# Some website like github use rel="icon"
+			icon_link = soup.find("link", rel="icon")
+
+		else:
+			# fallback icon 
+			return "applications-internet"
+
+		#print icon_link
 
 		if icon_link['href'][:2]=="//": # URL Fix
 			icon_link['href']="http:"+icon_link['href']
+
+		elif icon_link['href'][:1]=="/": # <link rel="icon" type="image/x-icon" href="/icon.ico">
+			icon_link['href']=url+icon_link['href']
+
+		#print icon_link['href']
 
 		icon = urllib2.urlopen(icon_link['href'])
 		icostr = "/tmp/" + name + ".ico"

@@ -53,7 +53,10 @@ if __name__ == "__main__":
 
 		print "Trying to get favicon..."
 		favicon = addapp.getFavicon(url)
-		print "done!\n"
+		if favicon == "applications-internet":
+			print "failed!\n"
+		else:
+			print "done!\n"
 		
 
 		categ = dic[lst[int(cat)]]
