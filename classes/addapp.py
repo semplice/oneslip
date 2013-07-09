@@ -21,17 +21,17 @@ import os
 import gmenu
 import string
 import  urllib2
+import time
 
 import t3rdparty.Win32IconImagePlugin
 
+from gi.repository import Gtk, GObject
 from BeautifulSoup import BeautifulSoup 
 from PIL import Image
 
-#DESKTOPDIR = "/usr/share/applications"
 DESKTOPDIR = os.getenv("HOME") + "/.local/share/applications"
-#DESKTOPDIR = os.getenv("HOME")
 FAVICONDIR = os.getenv("HOME") + "/.oneslip/favicons/"
-
+ADDAPP_FE = os.path.join(os.path.dirname(os.path.realpath(__file__)), "../frontend/add.glade")
 
 class addapp:
 
@@ -170,3 +170,135 @@ Icon=%(icon)s
 Categories=%(cat)s""" % {"name":name, "exec":execute, "cat":cat, "icon":icon})
 
 		return True
+
+class addappgui():
+	def __init__(self, donotshow=False):
+		
+		# GUI setup
+		self.builder = Gtk.Builder()
+		self.builder.add_from_file(ADDAPP_FE)
+
+		# Get objects
+		self.main = self.builder.get_object("main")
+
+		# Status
+		self.box_status = self.builder.get_object("box-status")
+		self.image_status = self.builder.get_object("image-status")
+		self.label_status = self.builder.get_object("label-status")
+
+		# Window
+		self.name_entry = self.builder.get_object("name-entry")
+		self.url_entry = self.builder.get_object("url-entry")
+		self.width_entry = self.builder.get_object("width-entry")
+		self.height_entry = self.builder.get_object("height-entry")
+		self.cat_combo = self.builder.get_object("category-combo")
+		self.btn_save = self.builder.get_object("save-btn")
+		self.btn_cancel = self.builder.get_object("cancel-btn")
+
+		# Events
+		self.btn_save.connect("clicked", self.save)
+		self.btn_cancel.connect("clicked", self.cancel)
+
+		# Show it
+		self.setup()
+
+		if not donotshow: self.main.show_all()
+
+		self.box_status.hide()
+
+		# Connect destroy
+		self.main.connect("destroy", lambda x: Gtk.main_quit())
+
+	def save(self, opt = None):
+		""" Verify the inputs and make the .desktop """
+
+		app = addapp() 
+
+		# Get inputs
+		name = self.name_entry.get_text()
+		url = self.url_entry.get_text()
+		width = self.width_entry.get_text()
+		height = self.height_entry.get_text()
+		catree = self.cat_combo.get_active_iter()
+
+		size =width+"x"+height
+
+		if catree != None:
+			model = self.cat_combo.get_model()
+			cat = model[catree][0]
+		else:
+			self.status("inputs")
+			return False
+
+		if not app.check(name,url,size,3):
+			self.status("inputs")
+			return False
+
+		self.status("getfavicon")
+
+		time.sleep(1)
+		favicon = app.getFavicon(url)
+
+		if favicon == "applications-internet":
+			self.status("errfavicon")
+		else:
+			self.status("succfavicon")
+
+		lst, dic = app.getcat()
+
+		# Get english name for the category
+		cateng = dic[cat]
+
+		if app.createdesktop(name,url,size,app.getTruecat(cateng),favicon):
+			self.status("success")		
+
+	def cancel(self):
+		""" cancel """
+
+	def setup(self):
+		""" initialize GUI """
+
+		getcat = addapp()
+		lst, dic = getcat.getcat()
+		
+		listmodel = Gtk.ListStore(GObject.TYPE_STRING)
+
+		for item in lst:
+			listmodel.append((item,))
+
+		self.cat_combo.set_model(listmodel)
+		cell = Gtk.CellRendererText()
+		self.cat_combo.pack_start(cell, True)
+		self.cat_combo.add_attribute(cell, "text", 0)
+
+	def status(self, type):
+		""" Status bar """
+
+		if type=="inputs":
+			self.box_status.show()
+			self.image_status.set_from_icon_name("gtk-dialog-error", Gtk.IconSize(6))
+			self.label_status.set_text("Error: invalid inputs")
+
+		if type=="getfavicon":
+			self.box_status.show()
+			self.image_status.set_from_icon_name("gtk-dialog-warning", Gtk.IconSize(6))
+			self.label_status.set_text("Trying to get favicon...")
+
+		if type=="errfavicon":
+			self.box_status.show()
+			self.image_status.set_from_icon_name("gtk-dialog-error", Gtk.IconSize(6))
+			self.label_status.set_text("Trying to get favicon...Failed!")
+
+		if type=="succfavicon":
+			self.box_status.show()
+			self.image_status.set_from_icon_name("gtk-info", Gtk.IconSize(6))
+			self.label_status.set_text("Trying to get favicon...Success!")
+
+		if type=="success":
+			self.box_status.show()
+			self.image_status.set_from_icon_name("gtk-info", Gtk.IconSize(6))
+			self.label_status.set_text("Web application added to your menu!")
+
+
+
+

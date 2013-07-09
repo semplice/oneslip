@@ -19,7 +19,6 @@
 
 from gi.repository import Gtk, GObject
 
-import classes.addappGUI
 import classes.addapp
 
 import os
@@ -28,7 +27,7 @@ import gmenu
 
 if __name__ == "__main__":
 
-	if sys.argv < 1:
+	if len(sys.argv) < 2:
 		sys.exit("Usage: %s [cli|gtk]" % sys.argv[0])
 
 	if sys.argv[1]=="cli":
@@ -67,5 +66,5 @@ if __name__ == "__main__":
 	if sys.argv[1]=="gtk":
 		# GTK interface 
 
-		g = classes.addappgui()
+		g = classes.addapp.addappgui()
 		Gtk.main()
