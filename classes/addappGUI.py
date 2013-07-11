@@ -129,7 +129,7 @@ class addappgui():
 			GObject.idle_add(self.grid_inputs.set_sensitive, True)
 			GObject.idle_add(self.dialog_action_area.set_sensitive, True)		
 
-	def cancel(self):
+	def cancel(self, opt=None):
 		""" cancel """
 		self.main.destroy()
 		Gtk.main_quit()
