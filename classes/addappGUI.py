@@ -19,9 +19,10 @@
 
 import addapp
 import os
+import time
 
 from gi.repository import Gtk, GObject
-from threading import Thread
+import threading
 
 ADDAPP_FE = os.path.join(os.path.dirname(os.path.realpath(__file__)), "../frontend/add.glade")
 
@@ -68,7 +69,7 @@ class addappgui():
 	def save(self, opt = None):
 		""" Verify the inputs and make the .desktop """
 
-		GObject.idle_add(self.save_thread)
+		threading.Thread(target=self.save_thread).start()
 
 	def save_thread(self, opt = None):
 
@@ -96,7 +97,6 @@ class addappgui():
 
 		GObject.idle_add(self.status, "getfavicon")
 
-		#time.sleep(1)
 		favicon = app.getFavicon(url)
 
 		if favicon == "applications-internet":
@@ -104,6 +104,7 @@ class addappgui():
 		else:
 			GObject.idle_add(self.status, "succfavicon")
 
+		time.sleep(1)
 		lst, dic = app.getcat()
 
 		# Get english name for the category
@@ -159,5 +160,3 @@ class addappgui():
 			self.box_status.show()
 			self.image_status.set_from_icon_name("gtk-info", Gtk.IconSize(6))
 			self.label_status.set_text("Web application added to your menu!")
-
-#class save_apply(Thread):

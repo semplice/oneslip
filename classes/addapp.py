@@ -42,7 +42,7 @@ class addapp:
 			#print url
 
 		# Add http:// to url
-		if url[:7]=="http://":
+		if url[:7]=="http://" or url[:7]=="file://":
 			name = url[7:]
 		elif url[:8]=="https://":
 			name = url[8:]
@@ -63,15 +63,18 @@ class addapp:
 			icon_link = soup.find("link", rel="icon")
 
 		else:
-			if urllib2.urlopen(url + "/favicon.ico"):
+
+			try:
+				urllib2.urlopen(url + "/favicon.ico")
 				# Try to find favicon
 				icon_link = {}
 				icon_link['href'] = url + "/favicon.ico"
-			else:
+			except urllib2.HTTPError:
 				# fallback icon 
 				return "applications-internet"
 
 		#print icon_link
+
 
 		if icon_link['href'][:2]=="//": # URL Fix
 			icon_link['href']="http:"+icon_link['href']
@@ -79,20 +82,29 @@ class addapp:
 		elif icon_link['href'][:1]=="/": # <link rel="icon" type="image/x-icon" href="/icon.ico">
 			icon_link['href']=url+icon_link['href']
 
+		if not icon_link['href'][:7]=="http://" or not icon_link['href'][:7]=="file://" or not icon_link['href'][:8]=="https://": # Fix href=ico/icon.ico
+			icon_link['href']=url+"/"+icon_link['href']
+
+		print icon_link['href']
+
 		#print icon_link['href']
+		try:
+			urllib2.urlopen(icon_link['href'])
+			icon = urllib2.urlopen(icon_link['href'])
+			icostr = "/tmp/" + name + ".ico"
+			pngstr = FAVICONDIR + name + ".png"
+			with open(icostr, "wb") as f:
+				f.write(icon.read())
 
-		icon = urllib2.urlopen(icon_link['href'])
-		icostr = "/tmp/" + name + ".ico"
-		pngstr = FAVICONDIR + name + ".png"
-		with open(icostr, "wb") as f:
-			f.write(icon.read())
+			# Convert favicon to png
+			img = Image.open(icostr)
+			img.convert('RGBA')
+			img.save(pngstr)
 
-		# Convert favicon to png
-		img = Image.open(icostr)
-		img.convert('RGBA')
-		img.save(pngstr)
-
-		return pngstr
+			return pngstr
+		except urllib2.HTTPError:
+			# 404 - fallback icon 
+			return "applications-internet"
 
 	def getcat(self):
 		""" Return a dictionary with the applications categories available """

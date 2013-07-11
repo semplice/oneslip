@@ -24,6 +24,7 @@ import classes.addappGUI
 
 import os
 import sys
+import threading
 import gmenu
 
 if __name__ == "__main__":
@@ -68,4 +69,5 @@ if __name__ == "__main__":
 		# GTK interface 
 
 		g = classes.addappGUI.addappgui()
+
 		Gtk.main()
