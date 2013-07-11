@@ -21,7 +21,7 @@ import addapp
 import os
 import time
 
-from gi.repository import Gtk, GObject
+from gi.repository import Gtk, GObject, Gdk
 import threading
 
 ADDAPP_FE = os.path.join(os.path.dirname(os.path.realpath(__file__)), "../frontend/add.glade")
@@ -39,16 +39,20 @@ class addappgui():
 		self.main = self.builder.get_object("main")
 
 		# Status
+		self.eventbox = self.builder.get_object("eventbox")
 		self.box_status = self.builder.get_object("box-status")
 		self.image_status = self.builder.get_object("image-status")
 		self.label_status = self.builder.get_object("label-status")
 
 		# Window
+		self.grid_inputs = self.builder.get_object("grid-inputs")
 		self.name_entry = self.builder.get_object("name-entry")
 		self.url_entry = self.builder.get_object("url-entry")
 		self.width_entry = self.builder.get_object("width-entry")
 		self.height_entry = self.builder.get_object("height-entry")
 		self.cat_combo = self.builder.get_object("category-combo")
+
+		self.dialog_action_area = self.builder.get_object("dialog-action-area")
 		self.btn_save = self.builder.get_object("save-btn")
 		self.btn_cancel = self.builder.get_object("cancel-btn")
 
@@ -61,7 +65,7 @@ class addappgui():
 
 		if not donotshow: self.main.show_all()
 
-		self.box_status.hide()
+		self.eventbox.hide()
 
 		# Connect destroy
 		self.main.connect("destroy", lambda x: Gtk.main_quit())
@@ -74,6 +78,10 @@ class addappgui():
 	def save_thread(self, opt = None):
 
 		app = addapp.addapp() 
+
+		# Set window sensitive False
+		GObject.idle_add(self.grid_inputs.set_sensitive, False)
+		GObject.idle_add(self.dialog_action_area.set_sensitive, False)
 
 		# Get inputs
 		name = self.name_entry.get_text()
@@ -89,10 +97,16 @@ class addappgui():
 			cat = model[catree][0]
 		else:
 			GObject.idle_add(self.status, "inputs")
+			GObject.idle_add(self.grid_inputs.set_sensitive, True)
+			GObject.idle_add(self.dialog_action_area.set_sensitive, True)
+
 			return False
 
 		if not app.check(name,url,size,3):
 			GObject.idle_add(self.status, "inputs")
+			GObject.idle_add(self.grid_inputs.set_sensitive, True)
+			GObject.idle_add(self.dialog_action_area.set_sensitive, True)
+
 			return False
 
 		GObject.idle_add(self.status, "getfavicon")
@@ -111,10 +125,14 @@ class addappgui():
 		cateng = dic[cat]
 
 		if app.createdesktop(name,url,size,app.getTruecat(cateng),favicon):
-			GObject.idle_add(self.status, "success")		
+			GObject.idle_add(self.status, "success")
+			GObject.idle_add(self.grid_inputs.set_sensitive, True)
+			GObject.idle_add(self.dialog_action_area.set_sensitive, True)		
 
 	def cancel(self):
 		""" cancel """
+		self.main.destroy()
+		Gtk.main_quit()
 
 	def setup(self):
 		""" initialize GUI """
@@ -137,26 +155,31 @@ class addappgui():
 		""" Status bar """
 
 		if type=="inputs":
-			self.box_status.show()
+			self.eventbox.show()
+			self.eventbox.modify_bg(Gtk.StateType.NORMAL, Gdk.color_parse("#F07568"))
 			self.image_status.set_from_icon_name("gtk-dialog-error", Gtk.IconSize(6))
 			self.label_status.set_text("Error: invalid inputs")
 
 		if type=="getfavicon":
-			self.box_status.show()
+			self.eventbox.show()
+			self.eventbox.modify_bg(Gtk.StateType.NORMAL, Gdk.color_parse("#729fcf"))
 			self.image_status.set_from_icon_name("gtk-dialog-warning", Gtk.IconSize(6))
 			self.label_status.set_text("Trying to get favicon...")
 
 		if type=="errfavicon":
-			self.box_status.show()
+			self.eventbox.show()
+			self.eventbox.modify_bg(Gtk.StateType.NORMAL, Gdk.color_parse("#F07568"))
 			self.image_status.set_from_icon_name("gtk-dialog-error", Gtk.IconSize(6))
 			self.label_status.set_text("Trying to get favicon...Failed!")
 
 		if type=="succfavicon":
-			self.box_status.show()
+			self.eventbox.show()
+			self.eventbox.modify_bg(Gtk.StateType.NORMAL, Gdk.color_parse("#73d216"))
 			self.image_status.set_from_icon_name("gtk-info", Gtk.IconSize(6))
 			self.label_status.set_text("Trying to get favicon...Success!")
 
 		if type=="success":
-			self.box_status.show()
+			self.eventbox.show()
+			self.eventbox.modify_bg(Gtk.StateType.NORMAL, Gdk.color_parse("#73d216"))
 			self.image_status.set_from_icon_name("gtk-info", Gtk.IconSize(6))
 			self.label_status.set_text("Web application added to your menu!")

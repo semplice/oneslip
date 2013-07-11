@@ -82,10 +82,8 @@ class addapp:
 		elif icon_link['href'][:1]=="/": # <link rel="icon" type="image/x-icon" href="/icon.ico">
 			icon_link['href']=url+icon_link['href']
 
-		if not icon_link['href'][:7]=="http://" or not icon_link['href'][:7]=="file://" or not icon_link['href'][:8]=="https://": # Fix href=ico/icon.ico
+		if (icon_link['href'][:7]!="http://") and (icon_link['href'][:7]!="file://") and (icon_link['href'][:8]!="https://"): # Fix href=ico/icon.ico
 			icon_link['href']=url+"/"+icon_link['href']
-
-		print icon_link['href']
 
 		#print icon_link['href']
 		try:
@@ -102,6 +100,7 @@ class addapp:
 			img.save(pngstr)
 
 			return pngstr
+
 		except urllib2.HTTPError:
 			# 404 - fallback icon 
 			return "applications-internet"
