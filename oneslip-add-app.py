@@ -20,6 +20,7 @@
 from gi.repository import Gtk, GObject
 
 import classes.addapp
+import classes.addappGUI
 
 import os
 import sys
@@ -66,5 +67,5 @@ if __name__ == "__main__":
 	if sys.argv[1]=="gtk":
 		# GTK interface 
 
-		g = classes.addapp.addappgui()
+		g = classes.addappGUI.addappgui()
 		Gtk.main()
