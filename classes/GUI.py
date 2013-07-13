@@ -93,6 +93,8 @@ class GUI():
 		else:
 			name = url
 
+		name = name.replace('/','.')
+
 		iconstr = FAVICONDIR + name + ".png"
 
 		try:

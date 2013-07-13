@@ -51,6 +51,8 @@ class addapp:
 			url = "http://" + url
 		#print url
 
+		name = name.replace('/','.')
+
 		page = urllib2.urlopen(url)
 		soup = BeautifulSoup(page.read())
 
@@ -85,7 +87,6 @@ class addapp:
 		if (icon_link['href'][:7]!="http://") and (icon_link['href'][:7]!="file://") and (icon_link['href'][:8]!="https://"): # Fix href=ico/icon.ico
 			icon_link['href']=url+"/"+icon_link['href']
 
-		#print icon_link['href']
 		try:
 			urllib2.urlopen(icon_link['href'])
 			icon = urllib2.urlopen(icon_link['href'])
