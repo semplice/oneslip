@@ -141,7 +141,7 @@ class addapp:
 	def check(self, name, url, size, cat):
 		""" check user input """
 
-		name.replace(" ", "")
+		name = name.replace(" ", "")
 
 		if name == "":
 			return False
@@ -155,10 +155,22 @@ class addapp:
 		if len(sized)!=2:
 			return False
 
-		if int(sized[0])<0 and int(sized[1])<0:
+		try:
+			int(sized[0])
+		except ValueError:
 			return False
 
+		try:
+			int(sized[1])
+		except ValueError:
+			return False
+
+		if int(sized[0])<0 and int(sized[1])<0:
+				return False
+
 		if int(cat)<0 and int(cat)>11:
+				return False
+		else:
 			return False
 
 		return True
