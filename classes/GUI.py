@@ -23,14 +23,16 @@ import sys
 import string
 import os
 import urllib2
+import threading
 
 COOKIEDIR = os.getenv('HOME') + "/.oneslip/cookies/cookies.txt"
 FAVICONDIR = os.getenv('HOME') + "/.oneslip/favicons/"
 
+GObject.threads_init()
+
 class GUI():
 
 	def __init__(self, width, height, url):
-
 
 		self.window = Gtk.Window()
 		#self.window.set_resizable(False)
@@ -56,28 +58,40 @@ class GUI():
 		cookie.set_accept_policy(WebKit2.CookieAcceptPolicy.ALWAYS)
 
 		self.view.load_uri(url)
+		self.url = url
 		
 		self.window.add(self.view)
 		self.view.set_size_request(int(width), int(height))
 
 		self.window.show_all()
 		self.view.connect("load-changed", self.load_finished)
+		#self.view.connect("load-started", self.load_started)
 		self.view.connect("load-failed", self.load_failed)
 		
 		self.window.connect('delete-event', lambda window, event: Gtk.main_quit())
-
 
 	def load_failed(self, view, frame):
 		self.window.set_title("Error!")
 		#self.view.load.uri()
 
 	def load_finished(self, view, frame):
-		title = self.view.get_title()
-		if not title:
-			title = self.view.get_uri()
-		if title:
-			# Set web page title as Gtk Window title
-			self.window.set_title(title)
+		urlz = self.view.get_uri()
+
+		# Check if we are already at the same website
+		if not urlz.startswith(self.url):
+			# If not open link in browser
+			get_url = self.view.get_uri()
+			GObject.idle_add(os.system, "x-www-browser "+ get_url)
+			self.view.load_uri(self.url) # WebView crashed, to fix
+
+		else:
+
+			title = self.view.get_title()
+			if not title:
+				title = self.view.get_uri()
+			if title:
+				# Set web page title as Gtk Window title
+				self.window.set_title(title)
 
 	def getIcon(self, url):
 		""" Get icon from FAVICONDIR """

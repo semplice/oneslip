@@ -20,9 +20,9 @@
 import addapp
 import os
 import time
+import threading
 
 from gi.repository import Gtk, GObject, Gdk
-import threading
 
 ADDAPP_FE = os.path.join(os.path.dirname(os.path.realpath(__file__)), "../frontend/add.glade")
 
