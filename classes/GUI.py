@@ -24,19 +24,32 @@ import string
 import os
 import urllib2
 import threading
+import subprocess
+
+# Debugging
+#import pdb
+#pdb.set_trace()
 
 COOKIEDIR = os.getenv('HOME') + "/.oneslip/cookies/cookies.txt"
 FAVICONDIR = os.getenv('HOME') + "/.oneslip/favicons/"
 
 GObject.threads_init()
 
+class oneslipWebView(WebKit2.WebView):
+
+	def LoadEvent(self, url):
+		print url
+		WebKit2.WebView.URIRequest(self, url)
+
 class GUI():
 
 	def __init__(self, width, height, url):
 
+		self.child_i = 0 # Increment for child in external links
+
 		self.window = Gtk.Window()
 		#self.window.set_resizable(False)
-		self.view = WebKit2.WebView()
+		self.view = oneslipWebView()
 
 		# Favicon
 
@@ -81,9 +94,11 @@ class GUI():
 		if not urlz.startswith(self.url):
 			# If not open link in browser
 			get_url = self.view.get_uri()
-			GObject.idle_add(os.system, "x-www-browser "+ get_url)
-			self.view.load_uri(self.url) # WebView crashed, to fix
-
+			
+			if self.child_i < 1:
+				# This event is called more then one time at "click"
+				browser = subprocess.call(["x-www-browser", get_url])
+				self.child_i = self.child_i + 1
 		else:
 
 			title = self.view.get_title()
@@ -117,3 +132,6 @@ class GUI():
    			return False
 
    		return iconstr
+
+   	#def thread(self, cmd):
+   	#	os.system(cmd)
