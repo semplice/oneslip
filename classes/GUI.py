@@ -37,19 +37,16 @@ GObject.threads_init()
 
 class oneslipWebView(WebKit2.WebView):
 
-	def LoadEvent(self, url):
-		print url
-		WebKit2.WebView.URIRequest(self, url)
+	def provah(self):
+		pass
 
 class GUI():
 
 	def __init__(self, width, height, url):
 
-		self.child_i = 0 # Increment for child in external links
-
 		self.window = Gtk.Window()
 		#self.window.set_resizable(False)
-		self.view = oneslipWebView()
+		self.view = WebKit2.WebView()
 
 		# Favicon
 
@@ -72,6 +69,7 @@ class GUI():
 
 		self.view.load_uri(url)
 		self.url = url
+		self.baseurl = url.replace("http://","").replace("file://","").replace("https://","").split("/")[0]
 		
 		self.window.add(self.view)
 		self.view.set_size_request(int(width), int(height))
@@ -87,26 +85,27 @@ class GUI():
 		self.window.set_title("Error!")
 		#self.view.load.uri()
 
-	def load_finished(self, view, frame):
-		urlz = self.view.get_uri()
+	def load_finished(self, view, event):
+		
+		if event == WebKit2.LoadEvent.STARTED:
+			urlz = self.view.get_uri()
+			baseurlz = urlz.replace("http://","").replace("file://","").replace("https://","").split("/")[0]
 
-		# Check if we are already at the same website
-		if not urlz.startswith(self.url):
-			# If not open link in browser
-			get_url = self.view.get_uri()
-			
-			if self.child_i < 1:
-				# This event is called more then one time at "click"
-				browser = subprocess.call(["x-www-browser", get_url])
-				self.child_i = self.child_i + 1
-		else:
+			# Check if we are already at the same website
+			if not baseurlz.startswith(self.baseurl):
+				# Ensure we do not load the next page
+				self.view.stop_loading()
+				
+				# Open link in browser
+				browser = subprocess.call(["x-www-browser", urlz])
+			else:
 
-			title = self.view.get_title()
-			if not title:
-				title = self.view.get_uri()
-			if title:
-				# Set web page title as Gtk Window title
-				self.window.set_title(title)
+				title = self.view.get_title()
+				if not title:
+					title = self.view.get_uri()
+				if title:
+					# Set web page title as Gtk Window title
+					self.window.set_title(title)
 
 	def getIcon(self, url):
 		""" Get icon from FAVICONDIR """
