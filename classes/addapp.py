@@ -157,10 +157,6 @@ class addapp:
 
 		try:
 			int(sized[0])
-		except ValueError:
-			return False
-
-		try:
 			int(sized[1])
 		except ValueError:
 			return False
@@ -168,10 +164,10 @@ class addapp:
 		if int(sized[0])<0 and int(sized[1])<0:
 				return False
 
-		if int(cat)<0 and int(cat)>11:
+		"""if int(cat)<0 and int(cat)>11:
 				return False
 		else:
-			return False
+			return False"""
 
 		return True
 
