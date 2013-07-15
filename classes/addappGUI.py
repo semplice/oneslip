@@ -158,7 +158,7 @@ class addappgui():
 			self.eventbox.show()
 			self.eventbox.modify_bg(Gtk.StateType.NORMAL, Gdk.color_parse("#F07568"))
 			self.image_status.set_from_icon_name("gtk-dialog-error", Gtk.IconSize(6))
-			self.label_status.set_text("Error: invalid inputs")
+			self.label_status.set_text("Error: invalid inputs or server unreachable")
 
 		if type=="getfavicon":
 			self.eventbox.show()

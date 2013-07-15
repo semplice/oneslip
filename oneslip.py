@@ -20,22 +20,17 @@
 from gi.repository import WebKit2, Gtk, GObject
 
 import classes.GUI
+import classes.network
 
 import sys
 import string
 import os
-import urllib2
 
 APPDIR = os.path.join(os.path.dirname(os.path.realpath(__file__)), "./applications")
 
-if __name__ == "__main__":
+net = classes.network.Network()
 
-	def internet_on(page):
-		try:
-			response=urllib2.urlopen(page,timeout=1)
-			return True
-		except urllib2.URLError as err: pass
-		return False
+if __name__ == "__main__":
 
 	if len(sys.argv) < 3:
 		sys.exit("Usage: %s (URL) (width)x(height)" % sys.argv[0])
@@ -49,7 +44,7 @@ if __name__ == "__main__":
 	if size[0].isdigit() == False or size[1].isdigit() == False:
 		sys.exit("%s isn't a valid size" % sys.argv[2])
 
-	# check protocol
+	# Check protocol
 	if protocol == "file":
 		# Check if file exist
 		if os.path.exists(sys.argv[1][7:])==False:
@@ -57,7 +52,7 @@ if __name__ == "__main__":
 
 	else:
 		# Check if server is reachable
-		if internet_on(sys.argv[1])==False:
+		if net.internet_on(sys.argv[1])==False:
 			#print "no connection"
 			sys.argv[1] = "file://" + APPDIR + "/messages/errors/noconnection.html" # No network connection
 

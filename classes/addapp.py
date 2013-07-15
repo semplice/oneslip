@@ -23,6 +23,8 @@ import string
 import urllib2
 import time
 
+import network
+
 import t3rdparty.Win32IconImagePlugin
 
 from BeautifulSoup import BeautifulSoup 
@@ -30,6 +32,8 @@ from PIL import Image
 
 DESKTOPDIR = os.getenv("HOME") + "/.local/share/applications"
 FAVICONDIR = os.getenv("HOME") + "/.oneslip/favicons/"
+
+net = network.Network()
 
 class addapp:
 
@@ -84,14 +88,17 @@ class addapp:
 		elif icon_link['href'][:1]=="/": # <link rel="icon" type="image/x-icon" href="/icon.ico">
 			icon_link['href']=url+icon_link['href']
 
-		if (icon_link['href'][:7]!="http://") and (icon_link['href'][:7]!="file://") and (icon_link['href'][:8]!="https://"): # Fix href=ico/icon.ico
+		if not net.check_protocol(icon_link['href']): # Fix href=ico/icon.ico
 			icon_link['href']=url+"/"+icon_link['href']
 
 		try:
+			# Try to download favicon
 			urllib2.urlopen(icon_link['href'])
 			icon = urllib2.urlopen(icon_link['href'])
 			icostr = "/tmp/" + name + ".ico"
-			pngstr = FAVICONDIR + name + ".png"
+			pngstr = FAVICONDIR + name + ".png" 
+
+			# Save favicon
 			with open(icostr, "wb") as f:
 				f.write(icon.read())
 
@@ -142,20 +149,18 @@ class addapp:
 		""" check user input """
 
 		name = name.replace(" ", "")
-
 		if name == "":
 			return False
-
-		if url[:7]!="http://":
-			url = "http://" + url
 
 		# decode size
 		sized = string.split(size,'x')
 
 		if len(sized)!=2:
+			# Verify if exist height and width
 			return False
 
 		try:
+			# Verify if size is integer
 			int(sized[0])
 			int(sized[1])
 		except ValueError:
@@ -164,10 +169,16 @@ class addapp:
 		if int(sized[0])<0 and int(sized[1])<0:
 				return False
 
-		"""if int(cat)<0 and int(cat)>11:
+		if int(cat)<0 and int(cat)>11:
 				return False
-		else:
-			return False"""
+
+		if not net.check_protocol(url):
+			# Fallback protocol
+			url = "http://" + url
+
+		if not net.internet_on(url):
+			# Check if server is reachable
+			return False
 
 		return True
 

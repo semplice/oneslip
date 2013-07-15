@@ -94,7 +94,7 @@ class GUI():
 			# Check if we are already at the same website
 			if not baseurlz.startswith(self.baseurl):
 				# Ensure we do not load the next page
-				self.view.stop_loading()
+				self.view.go_back()
 				
 				# Open link in browser
 				browser = subprocess.call(["x-www-browser", urlz])
