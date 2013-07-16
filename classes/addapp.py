@@ -21,7 +21,6 @@ import os
 import gmenu
 import string
 import urllib2
-import time
 
 import network
 

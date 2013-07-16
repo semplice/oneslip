@@ -24,8 +24,6 @@ import classes.addappGUI
 
 import os
 import sys
-import threading
-import gmenu
 
 if __name__ == "__main__":
 

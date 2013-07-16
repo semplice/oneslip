@@ -35,11 +35,6 @@ FAVICONDIR = os.getenv('HOME') + "/.oneslip/favicons/"
 
 GObject.threads_init()
 
-class oneslipWebView(WebKit2.WebView):
-
-	def provah(self):
-		pass
-
 class GUI():
 
 	def __init__(self, width, height, url):
@@ -47,6 +42,7 @@ class GUI():
 		self.window = Gtk.Window()
 		#self.window.set_resizable(False)
 		self.view = WebKit2.WebView()
+		self.policy = WebKit2.NavigationPolicyDecision()
 
 		# Favicon
 
@@ -59,7 +55,6 @@ class GUI():
 		else:
 			# Set favicon as icon
 			self.window.set_icon_from_file(icon)
-
 
 		# Cookie support
 		context = self.view.get_context()
@@ -75,17 +70,22 @@ class GUI():
 		self.view.set_size_request(int(width), int(height))
 
 		self.window.show_all()
-		self.view.connect("load-changed", self.load_finished)
-		#self.view.connect("load-started", self.load_started)
+		self.view.connect("load-changed", self.load_changed)
+		self.view.connect("decide-policy", self.decide_policy)
 		self.view.connect("load-failed", self.load_failed)
 		
 		self.window.connect('delete-event', lambda window, event: Gtk.main_quit())
+
+	def decide_policy(self, decision, test, NavType):
+		#if self.policy == self.policy.LINK_CLICKED:
+		print WebKit2.NavigationType.LINK_CLICKED
+		print self.policy.get_request()
 
 	def load_failed(self, view, frame):
 		self.window.set_title("Error!")
 		#self.view.load.uri()
 
-	def load_finished(self, view, event):
+	def load_changed(self, view, event):
 		
 		if event == WebKit2.LoadEvent.STARTED:
 			urlz = self.view.get_uri()
@@ -94,18 +94,18 @@ class GUI():
 			# Check if we are already at the same website
 			if not baseurlz.startswith(self.baseurl):
 				# Ensure we do not load the next page
-				self.view.go_back()
-				
-				# Open link in browser
-				browser = subprocess.call(["x-www-browser", urlz])
-			else:
 
-				title = self.view.get_title()
-				if not title:
-					title = self.view.get_uri()
-				if title:
-					# Set web page title as Gtk Window title
-					self.window.set_title(title)
+				# Open link in browser
+				#browser = subprocess.call(["x-www-browser", urlz])
+
+		if event == WebKit2.LoadEvent.FINISHED:
+
+			title = self.view.get_title()
+			if not title:
+				title = self.view.get_uri()
+			if title:
+				# Set web page title as Gtk Window title
+				self.window.set_title(title)
 
 	def getIcon(self, url):
 		""" Get icon from FAVICONDIR """
