@@ -44,6 +44,7 @@ class GUI():
 		#self.window.set_resizable(False)
 		self.view = WebKit2.WebView()
 		self.policy = WebKit2.NavigationPolicyDecision()
+		self.download = WebKit2.Download()
 
 		# Favicon
 
@@ -63,6 +64,9 @@ class GUI():
 		cookie.set_persistent_storage(COOKIEDIR,WebKit2.CookiePersistentStorage.TEXT)
 		cookie.set_accept_policy(WebKit2.CookieAcceptPolicy.ALWAYS)
 
+		# Downloads support
+		self.download.set_destination("~/Downloads/") # To be fixed
+
 		self.view.load_uri(url)
 		self.url = url
 		self.baseurl = url.replace("http://","").replace("file://","").replace("https://","").split("/")[0]
@@ -74,13 +78,14 @@ class GUI():
 		self.view.connect("load-changed", self.load_changed)
 		self.view.connect("decide-policy", self.decide_policy)
 		self.view.connect("load-failed", self.load_failed)
+
 		
 		self.window.connect('delete-event', lambda window, event: Gtk.main_quit())
 
 	def decide_policy(self, decision, test, NavType):
 		#if self.policy == self.policy.LINK_CLICKED:
 		#if WebKit2.NavigationType.LINK_CLICKED:
-		print WebKit2.NavigationPolicyDecision.NavigationType
+		#print WebKit2.NavigationPolicyDecision.NavigationType
 		print self.policy.get_mouse_button()
 
 	def load_failed(self, view, frame):
