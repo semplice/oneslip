@@ -32,6 +32,7 @@ import subprocess
 
 COOKIEDIR = os.getenv('HOME') + "/.oneslip/cookies/cookies.txt"
 FAVICONDIR = os.getenv('HOME') + "/.oneslip/favicons/"
+APPDIR = os.path.join(os.path.dirname(os.path.realpath(__file__)), "./applications")
 
 GObject.threads_init()
 
@@ -78,12 +79,14 @@ class GUI():
 
 	def decide_policy(self, decision, test, NavType):
 		#if self.policy == self.policy.LINK_CLICKED:
-		print WebKit2.NavigationType.LINK_CLICKED
-		print self.policy.get_request()
+		#if WebKit2.NavigationType.LINK_CLICKED:
+		print WebKit2.NavigationPolicyDecision.NavigationType
+		print self.policy.get_mouse_button()
 
 	def load_failed(self, view, frame):
+		""" if load fail """
 		self.window.set_title("Error!")
-		#self.view.load.uri()
+		self.view.load_uri("file://" + APPDIR + "/messages/errors/error.html")
 
 	def load_changed(self, view, event):
 		
@@ -92,7 +95,7 @@ class GUI():
 			baseurlz = urlz.replace("http://","").replace("file://","").replace("https://","").split("/")[0]
 
 			# Check if we are already at the same website
-			if not baseurlz.startswith(self.baseurl):
+			#if not baseurlz.startswith(self.baseurl):
 				# Ensure we do not load the next page
 
 				# Open link in browser
