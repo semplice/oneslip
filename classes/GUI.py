@@ -82,11 +82,20 @@ class GUI():
 		
 		self.window.connect('delete-event', lambda window, event: Gtk.main_quit())
 
-	def decide_policy(self, decision, test, NavType):
-		#if self.policy == self.policy.LINK_CLICKED:
-		#if WebKit2.NavigationType.LINK_CLICKED:
-		#print WebKit2.NavigationPolicyDecision.NavigationType
-		print self.policy.get_mouse_button()
+	def decide_policy(self, view, decision, decision_type):
+		""" Fired when something happened (e.g. a link has been clicked) """
+		
+		if decision_type == WebKit2.PolicyDecisionType.NAVIGATION_ACTION:
+			urlz = decision.get_request().get_uri()
+			baseurlz = urlz.replace("http://","").replace("file://","").replace("https://","").split("/")[0]
+
+			# Check if we are already at the same website
+			if not baseurlz.startswith(self.baseurl):
+				# Open link in browser
+				browser = subprocess.Popen(["x-www-browser", urlz])
+				
+				# Do not even try to load the page
+				decision.ignore()
 
 	def load_failed(self, view, frame):
 		""" if load fail """
@@ -95,17 +104,6 @@ class GUI():
 
 	def load_changed(self, view, event):
 		
-		if event == WebKit2.LoadEvent.STARTED:
-			urlz = self.view.get_uri()
-			baseurlz = urlz.replace("http://","").replace("file://","").replace("https://","").split("/")[0]
-
-			# Check if we are already at the same website
-			#if not baseurlz.startswith(self.baseurl):
-				# Ensure we do not load the next page
-
-				# Open link in browser
-				#browser = subprocess.call(["x-www-browser", urlz])
-
 		if event == WebKit2.LoadEvent.FINISHED:
 
 			title = self.view.get_title()
@@ -114,7 +112,7 @@ class GUI():
 			if title:
 				# Set web page title as Gtk Window title
 				self.window.set_title(title)
-
+			
 	def getIcon(self, url):
 		""" Get icon from FAVICONDIR """
 		if url[-1:] == "/":
