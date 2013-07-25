@@ -34,3 +34,9 @@ class Network():
 		if (url[:7]!="http://") and (url[:7]!="file://") and (url[:8]!="https://"):
 			return False
 		return True
+
+	def remove_protocol(self, url):
+		""" Remove protocol from string """
+		name = url.replace("http://","").replace("file://","").replace("https://","")
+
+		return name 

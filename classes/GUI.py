@@ -26,15 +26,18 @@ import urllib2
 import threading
 import subprocess
 
-# Debugging
+import network
+
+# Debug
 #import pdb
 #pdb.set_trace()
 
-COOKIEDIR = os.getenv('HOME') + "/.oneslip/cookies/cookies.txt"
+COOKIEDIR = os.getenv('HOME') + "/.oneslip/cookies/"
 FAVICONDIR = os.getenv('HOME') + "/.oneslip/favicons/"
 APPDIR = os.path.join(os.path.dirname(os.path.realpath(__file__)), "./applications")
 
 GObject.threads_init()
+net = network.Network()
 
 class GUI():
 
@@ -59,13 +62,15 @@ class GUI():
 			self.window.set_icon_from_file(icon)
 
 		# Cookie support
+		cookie_file = self.getCookie(url)
+
 		context = self.view.get_context()
 		cookie = context.get_cookie_manager()
-		cookie.set_persistent_storage(COOKIEDIR,WebKit2.CookiePersistentStorage.TEXT)
+		cookie.set_persistent_storage(cookie_file,WebKit2.CookiePersistentStorage.TEXT)
 		cookie.set_accept_policy(WebKit2.CookieAcceptPolicy.ALWAYS)
 
 		# Downloads support
-		self.download.set_destination("~/Downloads/") # To be fixed
+		#self.download.set_destination("~/Downloads/") # To be fixed
 
 		self.view.load_uri(url)
 		self.url = url
@@ -115,20 +120,13 @@ class GUI():
 			
 	def getIcon(self, url):
 		""" Get icon from FAVICONDIR """
+
 		if url[-1:] == "/":
 			# Remove last char if it is "/"
 			name = url[:-1]
 			
-		# Remove http:// to url
-		if url[:7]=="http://":
-			name = url[7:]
-		elif url[:8]=="https://":
-			name = url[8:]
-		else:
-			name = url
-
+		name = net.remove_protocol(name)
 		name = name.replace('/','.')
-
 		iconstr = FAVICONDIR + name + ".png"
 
 		try:
@@ -138,5 +136,20 @@ class GUI():
 
    		return iconstr
 
-   	#def thread(self, cmd):
-   	#	os.system(cmd)
+   	def getCookie(self, url):
+   		""" Get cookie from COOKIEDIR """
+
+   		if url[-1:] == "/":
+			# Remove last char if it is "/"
+			name = url[:-1]
+			
+		name = net.remove_protocol(name)
+		name = name.replace('/','.')
+		cookiestr = COOKIEDIR + name
+
+		try:
+   			with open(cookiestr): pass
+		except IOError:
+   			open(cookiestr,'w')
+
+   		return cookiestr
