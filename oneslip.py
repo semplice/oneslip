@@ -19,17 +19,13 @@
 
 from gi.repository import WebKit2, Gtk, GObject
 
-import classes.GUI
+import classes.oneslip
 import classes.network
+import classes.lib
 
 import sys
 import string
 import os
-
-# NodeJS test
-import subprocess
-LIBDIR = os.path.join(os.path.dirname(os.path.realpath(__file__)), "./lib/")
-# ---
 
 APPDIR = os.path.join(os.path.dirname(os.path.realpath(__file__)), "./applications")
 
@@ -56,13 +52,9 @@ if __name__ == "__main__":
 			sys.argv[1] = "file://" + APPDIR + "/messages/errors/nofile.html" # Web application not found
 
 		# NodeJS test
-		#else:
-			# Check if oneslip.conf exist
-		#	with open(APPDIR+"/node-test/"+'oneslip.conf')as f:
-		#		for line in f:
-		#			test = line.replace("include","").replace("\"","").replace(" ","")
-		#	subprocess.Popen(["node", LIBDIR+test+".js"])
-		#	print "lol"
+		else:
+			# Check and execute libs
+			classes.lib.lib(sys.argv[1])
 
 	else:
 		# Check if server is reachable
@@ -70,5 +62,5 @@ if __name__ == "__main__":
 			#print "no connection"
 			sys.argv[1] = "file://" + APPDIR + "/messages/errors/noconnection.html" # No network connection
 
-	g = classes.GUI.GUI(size[0],size[1],sys.argv[1])
+	g = classes.oneslip.GUI(size[0],size[1],sys.argv[1])
 	Gtk.main()

@@ -4,7 +4,7 @@
 
     function DoPostBack()
     {
-    	socket= new WebSocket('ws://localhost:8000');
+    	socket= new WebSocket('ws://localhost:4001');
 		socket.onopen= function() {
     		socket.send('hello');
 		};
@@ -12,7 +12,7 @@
 	};</script>
 </head>
 <body>
-	<p>The notify server is listening on port 8000</p>
+	<p>The notify server is listening on port 4000</p>
 	<input type="button" id="Button2" value="Button 2 Click" onclick="DoPostBack()" />
 </body>
 </html>
