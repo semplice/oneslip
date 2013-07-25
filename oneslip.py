@@ -26,6 +26,11 @@ import sys
 import string
 import os
 
+# NodeJS test
+import subprocess
+LIBDIR = os.path.join(os.path.dirname(os.path.realpath(__file__)), "./lib/")
+# ---
+
 APPDIR = os.path.join(os.path.dirname(os.path.realpath(__file__)), "./applications")
 
 net = classes.network.Network()
@@ -49,6 +54,15 @@ if __name__ == "__main__":
 		# Check if file exist
 		if os.path.exists(sys.argv[1][7:])==False:
 			sys.argv[1] = "file://" + APPDIR + "/messages/errors/nofile.html" # Web application not found
+
+		# NodeJS test
+		#else:
+			# Check if oneslip.conf exist
+		#	with open(APPDIR+"/node-test/"+'oneslip.conf')as f:
+		#		for line in f:
+		#			test = line.replace("include","").replace("\"","").replace(" ","")
+		#	subprocess.Popen(["node", LIBDIR+test+".js"])
+		#	print "lol"
 
 	else:
 		# Check if server is reachable

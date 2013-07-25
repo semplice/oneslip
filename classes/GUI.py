@@ -120,7 +120,7 @@ class GUI():
 			
 	def getIcon(self, url):
 		""" Get icon from FAVICONDIR """
-
+		name = url
 		if url[-1:] == "/":
 			# Remove last char if it is "/"
 			name = url[:-1]
@@ -138,6 +138,7 @@ class GUI():
 
    	def getCookie(self, url):
    		""" Get cookie from COOKIEDIR """
+   		name = url
 
    		if url[-1:] == "/":
 			# Remove last char if it is "/"
