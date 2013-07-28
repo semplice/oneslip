@@ -27,8 +27,6 @@ import sys
 import string
 import os
 
-global tmp_pid
-
 APPDIR = os.path.join(os.path.dirname(os.path.realpath(__file__)), "./applications")
 
 net = classes.network.Network()

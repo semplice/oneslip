@@ -39,7 +39,6 @@ class lib():
 
 			for lib in libtoexec:
 				self.execLib(lib)
-				tmp_pid.append("test")
 
 		except IOError:
 			""" Do nothing :) """
