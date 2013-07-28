@@ -32,6 +32,8 @@ import network
 #import pdb
 #pdb.set_trace()
 
+print tmp_pid
+
 COOKIEDIR = os.getenv('HOME') + "/.oneslip/cookies/"
 FAVICONDIR = os.getenv('HOME') + "/.oneslip/favicons/"
 APPDIR = os.path.join(os.path.dirname(os.path.realpath(__file__)), "./applications")

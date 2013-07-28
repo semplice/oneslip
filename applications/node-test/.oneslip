@@ -1,1 +1,2 @@
-exec "notify"
+[oneslip]
+exec = notify

@@ -20,8 +20,11 @@
 import string
 import subprocess
 import os
+import ConfigParser
 
 LIBDIR = os.path.join(os.path.dirname(os.path.realpath(__file__)), "../lib/")
+
+config = ConfigParser.RawConfigParser()
 
 class lib():
 	""" Local web applications lib engine """
@@ -30,22 +33,16 @@ class lib():
 		
 		try:
 			with open(location + ".oneslip"): pass
-			libtoexec = self.readConf(location + ".oneslip")
+			config.read(location + ".oneslip")
+
+			libtoexec = config.get("oneslip","exec").split(",")
 
 			for lib in libtoexec:
 				self.execLib(lib)
+				tmp_pid.append("test")
 
 		except IOError:
 			""" Do nothing :) """
-
-	def readConf(self, location):
-		""" Read .oneslip file """
-		libs=[]
-		for line in open(location):
-			if line.startswith("exec"): # exec "notify"
-				line = line.replace("exec","").replace("\"","").replace(" ","")
-				libs.append(line)
-		return libs
 
 	def execLib(self,lib):
 		""" run nodejs lib """
