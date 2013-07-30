@@ -1,19 +1,17 @@
 <html>
 <head>
-    <script language="javascript" type="text/javascript">
+	<title>Semplice nodejs server test</title> 
+	<script type="text/javascript" src="semplice-client.js"></script>
 
-    function DoPostBack()
-    {
-    	socket= new WebSocket('ws://localhost:4001');
-		socket.onopen= function() {
-    		socket.send('notify hello');
-		};
-
-	};</script>
 </head>
 <body>
-	<p>The notify server is listening on port 4000</p>
-	<input type="button" id="Button2" value="Button 2 Click" onclick="DoPostBack()" />
+	<p>The notify server is listening on port 4001</p>
+	<input type="button" id="Button1" value="Test notification" onclick='notify("test notification...")' />
+	<input type="button" id="Button2" value="volume +" onclick='mixer("10%+")' />
+	<input type="button" id="Button3" value="volume -" onclick='mixer("10%-")' /><br />
+	<input type="button" id="Button4" value="Get network status" onclick='network("nm")'><br />
+	<input type="button" id="Button4" value="Get network devices status" onclick='network("d")'><br />
+
 </body>
 </html>
 
