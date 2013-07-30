@@ -26,6 +26,7 @@ import classes.lib
 import sys
 import string
 import os
+import subprocess
 
 APPDIR = os.path.join(os.path.dirname(os.path.realpath(__file__)), "./applications")
 
@@ -45,6 +46,8 @@ if __name__ == "__main__":
 	if size[0].isdigit() == False or size[1].isdigit() == False:
 		sys.exit("%s isn't a valid size" % sys.argv[2])
 
+	nodelib = False # Set nodelib False  (There aren't nodejs processes)
+
 	# Check protocol
 	if protocol == "file":
 		# Check if file exist
@@ -54,7 +57,9 @@ if __name__ == "__main__":
 		# NodeJS test
 		else:
 			# Check and execute libs
-			classes.lib.lib(sys.argv[1])
+			 lib = classes.lib.lib()
+			 pidlist = lib.load(sys.argv[1])
+			 nodelib = True # Set nodelib True (there are nodejs processes)
 
 	else:
 		# Check if server is reachable
@@ -64,3 +69,9 @@ if __name__ == "__main__":
 
 	g = classes.oneslip.GUI(size[0],size[1],sys.argv[1])
 	Gtk.main()
+
+	if nodelib:
+		# kill nodejs
+		for pid in pidlist:
+			#print pidlist[0]
+			os.system("kill -9 "+str(pid))

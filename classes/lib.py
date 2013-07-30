@@ -28,22 +28,33 @@ config = ConfigParser.RawConfigParser()
 
 class lib():
 	""" Local web applications lib engine """
-	def __init__(self, location):
-		location = location.replace("file://","").replace("index.html","").replace("index.htm","")
+	def load(self, location):
+
+		if location.startswith("file://"):
+
+			location = location.replace("file://","").replace("index.html","").replace("index.htm","")
 		
-		try:
-			with open(location + ".oneslip"): pass
-			config.read(location + ".oneslip")
+			try:
+				with open(location + ".oneslip"): pass
 
-			libtoexec = config.get("oneslip","exec").split(",")
+				pidlist = []
+				config.read(location + ".oneslip")
 
-			for lib in libtoexec:
-				self.execLib(lib)
+				libtoexec = config.get("oneslip","exec").split(",")
 
-		except IOError:
-			""" Do nothing :) """
+				for lib in libtoexec:
+					pidlist.append(self.execLib(lib))
+
+			except IOError:
+				""" Do nothing :) """
+				return False
+
+			return pidlist
+
+		return False
 
 	def execLib(self,lib):
 		""" run nodejs lib """
-		subprocess.Popen(["node", LIBDIR+lib+".js"])
+		process = subprocess.Popen(["node", LIBDIR+lib+".js"])
 
+		return process.pid

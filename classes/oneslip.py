@@ -39,6 +39,7 @@ APPDIR = os.path.join(os.path.dirname(os.path.realpath(__file__)), "./applicatio
 GObject.threads_init()
 net = network.Network()
 
+
 class GUI():
 
 	def __init__(self, width, height, url):

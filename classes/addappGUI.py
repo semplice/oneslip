@@ -75,6 +75,7 @@ class addappgui():
 
 		threading.Thread(target=self.save_thread).start()
 
+
 	def save_thread(self, opt = None):
 
 		app = addapp.addapp() 
@@ -127,7 +128,11 @@ class addappgui():
 		if app.createdesktop(name,url,size,app.getTruecat(cateng),favicon):
 			GObject.idle_add(self.status, "success")
 			GObject.idle_add(self.grid_inputs.set_sensitive, True)
-			GObject.idle_add(self.dialog_action_area.set_sensitive, True)		
+			GObject.idle_add(self.dialog_action_area.set_sensitive, True)
+
+		# close oneslip
+		time.sleep(1)
+		Gtk.main_quit()		
 
 	def cancel(self, opt=None):
 		""" cancel """
