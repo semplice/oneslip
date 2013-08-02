@@ -1,0 +1,51 @@
+Source: oneslip
+Section: web
+Priority: optional
+Maintainer: Eugenio Paolantonio (g7) <me@medesimo.eu>
+Build-Depends: debhelper (>= 7), python-all, python-support
+X-Python-Version: >= 2.7
+Standards-Version: 3.9.4
+Homepage: http://github.com/semplice/oneslip
+
+Package: oneslip
+Architecture: all
+Depends: ${python:Depends},
+ python-gi,
+ gir1.2-gtk-3.0,
+ gir1.2-webkit2-3.0,
+ python-gmenu,
+ python-beautifulsoup,
+ python-imaging
+Description: WebKit2-based web application viewer -- Main executable
+ oneslip is a Python-written web application viewer, which relies
+ on the famous WebKit rendering engine.
+ .
+ This package contains the main oneslip executables.
+
+Package: oneslip-lib-node
+Architecture: all
+Depends: oneslip, nodejs
+Description: WebKit2-based web application viewer -- core node.js library
+ oneslip is a Python-written web application viewer, which relies
+ on the famous WebKit rendering engine.
+ .
+ This package contains the core node.js library. Other oneslip libraries
+ which use nodejs should depend on this package.
+ 
+Package: oneslip-lib-semplice
+Architecture: all
+Depends: oneslip, oneslip-lib-node
+Description: WebKit2-based web application viewer -- semplice library
+ oneslip is a Python-written web application viewer, which relies
+ on the famous WebKit rendering engine.
+ .
+ This package contains the semplice.js library.
+
+Package: oneslip-application-node-test
+Architecture: all
+Depends: oneslip, oneslip-lib-semplice
+Description: WebKit2-based web application viewer -- node-test application
+ oneslip is a Python-written web application viewer, which relies
+ on the famous WebKit rendering engine.
+ .
+ This package contains the node-test example application.
