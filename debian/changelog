@@ -1,3 +1,9 @@
+oneslip (1.0.0-3) devel; urgency=low
+
+  * debian/oneslip.links: added.
+
+ -- Eugenio Paolantonio (g7) <me@medesimo.eu>  Fri, 02 Aug 2013 16:32:12 +0200
+
 oneslip (1.0.0-2) devel; urgency=low
 
   * Ensure we build in devel.
