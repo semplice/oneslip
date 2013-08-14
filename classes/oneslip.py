@@ -90,8 +90,9 @@ class GUI():
 
 	def decide_policy(self, view, decision, decision_type):
 		""" Fired when something happened (e.g. a link has been clicked) """
-		
-		if decision_type == WebKit2.PolicyDecisionType.NAVIGATION_ACTION:
+				
+		if (decision.__info__ == WebKit2.NavigationPolicyDecision.__info__ and decision.get_navigation_type() == WebKit2.NavigationType.LINK_CLICKED) and (
+			decision_type == WebKit2.PolicyDecisionType.NAVIGATION_ACTION):
 			urlz = decision.get_request().get_uri()
 			baseurlz = urlz.replace("http://","").replace("file://","").replace("https://","").split("/")[0]
 
