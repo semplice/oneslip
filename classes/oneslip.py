@@ -17,7 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from gi.repository import WebKit2, Gtk, GObject
+from gi.repository import WebKit2, Gtk, Gdk, GObject
 
 import sys
 import string
@@ -31,9 +31,10 @@ import network
 # Debug
 #import pdb
 #pdb.set_trace()
+HOME = os.getenv("HOME")
 
-COOKIEDIR = os.getenv('HOME') + "/.oneslip/cookies/"
-FAVICONDIR = os.getenv('HOME') + "/.oneslip/favicons/"
+COOKIEDIR = os.path.join(HOME, ".oneslip/cookies")
+FAVICONDIR = os.path.join(HOME, ".oneslip/favicons/")
 APPDIR = os.path.join(os.path.dirname(os.path.realpath(__file__)), "../applications")
 
 GObject.threads_init()
@@ -41,15 +42,37 @@ net = network.Network()
 
 
 class GUI():
+	def quit(self, obj):
+		""" Bye bye """
+		
+		Gtk.main_quit()
+		
+		# Rewrite favicon
+		name = self.view.get_uri()
+		if name[-1:] == "/":
+			# Remove last char if it is "/"
+			name = name[:-1]
+			
+		name = net.remove_protocol(name)
+		name = name.replace('/','.')
+		iconstr = FAVICONDIR + name + ".png"
+		
+		self.favi.write_to_png(iconstr)
+	
 	def __init__(self, width, height, url, title=None):
 
 		self.window = Gtk.Window()
+
 		#self.window.set_resizable(False)
 		self.view = WebKit2.WebView()
 		#self.policy = WebKit2.NavigationPolicyDecision()
+		#self.favicondir = WebKit2.FaviconDatabase()
 		self.download = WebKit2.Download()
-
-		# Favicon
+		self.settings = self.view.get_settings()
+		self.context = self.view.get_context()
+		self.favicondb = self.context.get_favicon_database()
+		
+		self.context.set_favicon_database_directory(FAVICONDIR)
 
 		icon = self.getIcon(url)
 
@@ -87,11 +110,12 @@ class GUI():
 		self.window.show_all()
 		self.view.connect("load-changed", self.load_changed)
 		self.view.connect("notify::title", self.title_changed)
+		self.view.connect("notify::favicon", self.favicon_changed)
 		self.view.connect("decide-policy", self.decide_policy)
 		self.view.connect("load-failed", self.load_failed)
 
 		
-		self.window.connect('destroy', Gtk.main_quit)
+		self.window.connect('destroy', self.quit)
 
 	def decide_policy(self, view, decision, decision_type):
 		""" Fired when something happened (e.g. a link has been clicked) """
@@ -150,8 +174,15 @@ class GUI():
 		
 		self.window.set_title(view.get_title())
 	
+	def favicon_changed(self, view, event):
+		""" Called when the page's favicon has been changed. """
+				
+		self.favi = view.get_favicon()
+		self.window.set_icon(Gdk.pixbuf_get_from_surface(self.favi, 0, 0, self.favi.get_width(), self.favi.get_height()))
+	
 	def getIcon(self, url):
 		""" Get icon from FAVICONDIR """
+		
 		name = url
 		if url[-1:] == "/":
 			# Remove last char if it is "/"
