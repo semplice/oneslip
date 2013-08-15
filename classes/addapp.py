@@ -30,8 +30,10 @@ import t3rdparty.Win32IconImagePlugin
 from BeautifulSoup import BeautifulSoup 
 from PIL import Image
 
-DESKTOPDIR = os.getenv("HOME") + "/.local/share/applications"
-FAVICONDIR = os.getenv("HOME") + "/.oneslip/favicons/"
+HOME = os.getenv("HOME")
+
+DESKTOPDIR = os.path.join(HOME, ".local/share/applications")
+FAVICONDIR = os.path.join(HOME, ".oneslip/favicons/")
 
 net = network.Network()
 

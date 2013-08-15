@@ -94,6 +94,7 @@ class GUI():
 		
 		self.window.add(self.view)
 		self.view.set_size_request(int(width), int(height))
+		self.window.set_position(Gtk.WindowPosition.CENTER)
 
 		self.window.show_all()
 		self.view.connect("load-changed", self.load_changed)
