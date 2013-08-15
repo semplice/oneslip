@@ -46,18 +46,6 @@ class GUI():
 		""" Bye bye """
 		
 		Gtk.main_quit()
-		
-		# Rewrite favicon
-		name = self.view.get_uri()
-		if name[-1:] == "/":
-			# Remove last char if it is "/"
-			name = name[:-1]
-			
-		name = net.remove_protocol(name)
-		name = name.replace('/','.')
-		iconstr = FAVICONDIR + name + ".png"
-		
-		self.favi.write_to_png(iconstr)
 	
 	def __init__(self, width, height, url, title=None):
 
@@ -75,7 +63,7 @@ class GUI():
 		self.context.set_favicon_database_directory(FAVICONDIR)
 
 		icon = self.getIcon(url)
-
+		
 		if title:
 			self.window.set_title(title)
 		else:
@@ -124,10 +112,10 @@ class GUI():
 		if (decision.__info__ == WebKit2.NavigationPolicyDecision.__info__ and decision.get_navigation_type() == WebKit2.NavigationType.LINK_CLICKED) and (
 			decision_type == WebKit2.PolicyDecisionType.NAVIGATION_ACTION):
 			urlz = decision.get_request().get_uri()
-			baseurlz = urlz.replace("http://","").replace("file://","").replace("https://","").split("/")[0]
+			baseurlz = urlz.replace("http://","").replace("file://","").replace("https://","").replace("www.").split("/")[0]
 
 			# Check if we are already at the same website
-			if not baseurlz.startswith(self.baseurl):
+			if not baseurlz.startswith(self.baseurl.replace("www.")):
 				spawn = True
 		elif decision_type == WebKit2.PolicyDecisionType.NEW_WINDOW_ACTION:
 			# Always spawn on a new window
