@@ -41,12 +41,17 @@ if __name__ == "__main__":
 	signal.signal(signal.SIGINT, signal.SIG_DFL)
 
 	if len(sys.argv) < 3:
-		sys.exit("Usage: %s (URL) (width)x(height)" % sys.argv[0])
+		sys.exit("Usage: %s (URL) (width)x(height) <Initial Title>" % sys.argv[0])
 
 	# decode size
 	size = string.split(sys.argv[2],'x')
 	# decode protocol
-	protocol = sys.argv[1][:4] 
+	protocol = sys.argv[1][:4]
+	# get intial title
+	if len(sys.argv) > 3:
+		title = " ".join(sys.argv[3:])
+	else:
+		title = None
 
 	# Verify size
 	if size[0].isdigit() == False or size[1].isdigit() == False:
@@ -73,7 +78,7 @@ if __name__ == "__main__":
 			#print "no connection"
 			sys.argv[1] = "file://" + APPDIR + "/messages/errors/noconnection.html" # No network connection
 
-	g = classes.oneslip.GUI(size[0],size[1],sys.argv[1])
+	g = classes.oneslip.GUI(size[0],size[1],sys.argv[1],title=title)
 	Gtk.main()
 
 	if nodelib:

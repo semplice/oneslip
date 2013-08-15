@@ -41,7 +41,7 @@ net = network.Network()
 
 
 class GUI():
-	def __init__(self, width, height, url):
+	def __init__(self, width, height, url, title=None):
 
 		self.window = Gtk.Window()
 		#self.window.set_resizable(False)
@@ -53,7 +53,10 @@ class GUI():
 
 		icon = self.getIcon(url)
 
-		self.window.set_title("Loading...")
+		if title:
+			self.window.set_title(title)
+		else:
+			self.window.set_title("Loading...")
 
 		if not icon: 
 			# Set fallback icon
@@ -123,12 +126,9 @@ class GUI():
 		
 		if event == WebKit2.LoadEvent.STARTED:
 			title = self.view.get_title()
-			if not title:
-				title = "Loading..."
-			else:
+			if title:
 				title = title + " (Loading...)"
-			
-			self.window.set_title(title)
+				self.window.set_title(title)
 		
 		elif event == WebKit2.LoadEvent.FINISHED:
 

@@ -186,7 +186,7 @@ class addapp:
 
 		with open(os.path.join(DESKTOPDIR, "oneslip-" + name +".desktop"), "w") as target:
 
-			execute = "oneslip " + url + " " + size
+			execute = "oneslip %(url)s %(size)s %(name)s" % {"url":url, "size":size, "name":name}
 
 			target.write("""[Desktop Entry]
 Version=1.0
