@@ -102,9 +102,13 @@ class addapp:
 				f.write(icon.read())
 
 			# Convert favicon to png
-			img = Image.open(icostr)
-			img.convert('RGBA')
-			img.save(pngstr)
+			try:
+				img = Image.open(icostr)
+				img.convert('RGBA')
+				img.save(pngstr)
+			except IOError:
+				# Something went wrong :(
+				return "applications-internet"
 
 			return pngstr
 
