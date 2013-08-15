@@ -72,11 +72,6 @@ if __name__ == "__main__":
 			 pidlist = lib.load(sys.argv[1])
 			 nodelib = True # Set nodelib True (there are nodejs processes)
 
-	else:
-		# Check if server is reachable
-		if net.internet_on(sys.argv[1])==False:
-			#print "no connection"
-			sys.argv[1] = "file://" + APPDIR + "/messages/errors/noconnection.html" # No network connection
 
 	g = classes.oneslip.GUI(size[0],size[1],sys.argv[1],title=title)
 	Gtk.main()

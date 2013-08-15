@@ -34,7 +34,7 @@ import network
 
 COOKIEDIR = os.getenv('HOME') + "/.oneslip/cookies/"
 FAVICONDIR = os.getenv('HOME') + "/.oneslip/favicons/"
-APPDIR = os.path.join(os.path.dirname(os.path.realpath(__file__)), "./applications")
+APPDIR = os.path.join(os.path.dirname(os.path.realpath(__file__)), "../applications")
 
 GObject.threads_init()
 net = network.Network()
@@ -117,10 +117,17 @@ class GUI():
 			# Do not even try to load the page
 			decision.ignore()
 
-	def load_failed(self, view, frame):
-		""" if load fail """
+	def load_failed(self, view, event, failing_uri, error):
+		""" Called when load fails """
+				
+		if event == WebKit2.LoadEvent.STARTED:
+			# Probably it's a network error
+			uri = "file://" + APPDIR + "/messages/errors/noconnection.html"
+		else:
+			uri = "file://" + APPDIR + "/messages/errors/error.html"
+		
 		self.window.set_title("Error!")
-		self.view.load_uri("file://" + APPDIR + "/messages/errors/error.html")
+		view.load_uri(uri)
 
 	def load_changed(self, view, event):
 		
