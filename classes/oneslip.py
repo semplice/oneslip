@@ -41,18 +41,19 @@ net = network.Network()
 
 
 class GUI():
-
 	def __init__(self, width, height, url):
 
 		self.window = Gtk.Window()
 		#self.window.set_resizable(False)
 		self.view = WebKit2.WebView()
-		self.policy = WebKit2.NavigationPolicyDecision()
+		#self.policy = WebKit2.NavigationPolicyDecision()
 		self.download = WebKit2.Download()
 
 		# Favicon
 
 		icon = self.getIcon(url)
+
+		self.window.set_title("Loading...")
 
 		if not icon: 
 			# Set fallback icon
@@ -86,7 +87,7 @@ class GUI():
 		self.view.connect("load-failed", self.load_failed)
 
 		
-		self.window.connect('delete-event', lambda window, event: Gtk.main_quit())
+		self.window.connect('destroy', Gtk.main_quit)
 
 	def decide_policy(self, view, decision, decision_type):
 		""" Fired when something happened (e.g. a link has been clicked) """
@@ -111,14 +112,22 @@ class GUI():
 
 	def load_changed(self, view, event):
 		
-		if event == WebKit2.LoadEvent.FINISHED:
+		if event == WebKit2.LoadEvent.STARTED:
+			title = self.view.get_title()
+			if not title:
+				title = "Loading..."
+			else:
+				title = title + " (Loading...)"
+			
+			self.window.set_title(title)
+		
+		elif event == WebKit2.LoadEvent.FINISHED:
 
 			title = self.view.get_title()
 			if not title:
 				title = self.view.get_uri()
-			if title:
-				# Set web page title as Gtk Window title
-				self.window.set_title(title)
+
+			self.window.set_title(title)
 			
 	def getIcon(self, url):
 		""" Get icon from FAVICONDIR """

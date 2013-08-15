@@ -32,7 +32,13 @@ APPDIR = os.path.join(os.path.dirname(os.path.realpath(__file__)), "./applicatio
 
 net = classes.network.Network()
 
+GObject.threads_init()
+
+
 if __name__ == "__main__":
+
+	import signal
+	signal.signal(signal.SIGINT, signal.SIG_DFL)
 
 	if len(sys.argv) < 3:
 		sys.exit("Usage: %s (URL) (width)x(height)" % sys.argv[0])
