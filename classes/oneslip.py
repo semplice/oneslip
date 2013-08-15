@@ -92,6 +92,7 @@ class GUI():
 	def decide_policy(self, view, decision, decision_type):
 		""" Fired when something happened (e.g. a link has been clicked) """
 				
+		spawn = False
 		if (decision.__info__ == WebKit2.NavigationPolicyDecision.__info__ and decision.get_navigation_type() == WebKit2.NavigationType.LINK_CLICKED) and (
 			decision_type == WebKit2.PolicyDecisionType.NAVIGATION_ACTION):
 			urlz = decision.get_request().get_uri()
@@ -99,11 +100,18 @@ class GUI():
 
 			# Check if we are already at the same website
 			if not baseurlz.startswith(self.baseurl):
-				# Open link in browser
-				browser = subprocess.Popen(["x-www-browser", urlz])
-				
-				# Do not even try to load the page
-				decision.ignore()
+				spawn = True
+		elif decision_type == WebKit2.PolicyDecisionType.NEW_WINDOW_ACTION:
+			# Always spawn on a new window
+			
+			spawn = True
+
+		if spawn:
+			# Open link in browser
+			browser = subprocess.Popen(["x-www-browser", decision.get_request().get_uri()])
+			
+			# Do not even try to load the page
+			decision.ignore()
 
 	def load_failed(self, view, frame):
 		""" if load fail """
