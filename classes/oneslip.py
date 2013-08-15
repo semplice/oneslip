@@ -83,6 +83,7 @@ class GUI():
 
 		self.window.show_all()
 		self.view.connect("load-changed", self.load_changed)
+		self.view.connect("notify::title", self.title_changed)
 		self.view.connect("decide-policy", self.decide_policy)
 		self.view.connect("load-failed", self.load_failed)
 
@@ -136,7 +137,12 @@ class GUI():
 				title = self.view.get_uri()
 
 			self.window.set_title(title)
-			
+	
+	def title_changed(self, view, event):
+		""" Called when the page title has been changed. """
+		
+		self.window.set_title(view.get_title())
+	
 	def getIcon(self, url):
 		""" Get icon from FAVICONDIR """
 		name = url
