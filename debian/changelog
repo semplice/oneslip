@@ -1,3 +1,30 @@
+oneslip (1.0.1-1) unstable; urgency=low
+
+  [ Eugenio Paolantonio (g7) ]
+  * Ensure we open stock browser windows only if the user clicked a link.
+  * Do not segfault on exits.
+  * Catch KeyboardInterrupts.
+  * Set nicer titles when loading.
+  * Spawn stock browser on new windows, too.
+  * Ensure we update the window title when the page's one changes
+  * It's now possible to specify initial window title at invocation.
+  * Speed up opening by not testing the internet connection.
+    If connection is absent, load-failed will be fired and we will warn the user accordingly.
+  * Some bugfixes in add-app
+  * Had some fun with favicons and webkit's favicondatabase.
+  * Refactored the getFavicon method in addapp: now we directly use WebKit.
+    The code is a bit ugly because we can't currently get the favicon from the database, but it gets the job done.
+  * Open oneslip window at center.
+
+  [ Giuseppe 'GsC_RuL3Z' Corti ]
+  * Added oneslip-add-app.desktop
+
+  [ Eugenio Paolantonio (g7) ]
+  * Ship add-app .desktop file.
+  * Target to unstable (current).
+
+ -- Eugenio Paolantonio (g7) <me@medesimo.eu>  Sat, 17 Aug 2013 19:28:36 +0200
+
 oneslip (1.0.0-3) devel; urgency=low
 
   * debian/oneslip.links: added.
