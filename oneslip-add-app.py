@@ -27,6 +27,9 @@ import sys
 
 if __name__ == "__main__":
 
+	import signal
+	signal.signal(signal.SIGINT, signal.SIG_DFL)
+
 	if len(sys.argv) < 2:
 		sys.exit("Usage: %s [cli|gtk]" % sys.argv[0])
 

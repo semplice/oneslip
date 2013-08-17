@@ -26,8 +26,8 @@ class Network():
 		try:
 			response=urllib2.urlopen(url,timeout=1)
 			return True
-		except urllib2.URLError as err: pass
-		return False
+		except:
+			return False
 
 	def check_protocol(self, url):
 		""" Check if user is using http://, https:// or file:// """

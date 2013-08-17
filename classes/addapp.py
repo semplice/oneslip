@@ -23,20 +23,92 @@ import string
 import urllib2
 
 import network
+import time
 
 import t3rdparty.Win32IconImagePlugin
 
 from BeautifulSoup import BeautifulSoup 
 from PIL import Image
 
-DESKTOPDIR = os.getenv("HOME") + "/.local/share/applications"
-FAVICONDIR = os.getenv("HOME") + "/.oneslip/favicons/"
+HOME = os.getenv("HOME")
+
+DESKTOPDIR = os.path.join(HOME, ".local/share/applications")
+FAVICONDIR = os.path.join(HOME, ".oneslip/favicons/")
 
 net = network.Network()
 
-class addapp:
+from gi.repository import WebKit2
 
-	def getFavicon(self,url):
+class addapp:
+	def getFavicon(self, url):
+		""" Try to get favicon from a website """
+		
+		# The following is a workaround and then it's UGLY AS HELL.
+		# Please do not take example from the following code.
+		# If you are a real programmer, please stop reading here.
+		# YOU HAVE BEEN WARNED.
+		
+		self.url = url
+		
+		self.favicon = None
+		self.running = False
+		
+		view = WebKit2.WebView()
+		context = view.get_context()
+		
+		context.set_favicon_database_directory(FAVICONDIR)
+
+		view.connect("load-changed", self.__UGLY_load_changed)
+		view.connect("notify::favicon", self.__UGLY_favicon_changed)
+		
+		# Load uri
+		view.load_uri(self.url)
+				
+		# Wait for the favicon
+		while not self.favicon or self.running:
+			time.sleep(0.1)
+		
+		return self.favicon
+
+	def __UGLY_load_changed(self, view, event):
+		""" Called by our ugly workaround to get the favicon. """
+
+		# The following is a workaround and then it's UGLY AS HELL.
+		# Please do not take example from the following code.
+		# If you are a real programmer, please stop reading here.
+		# YOU HAVE BEEN WARNED.
+						
+		if event == WebKit2.LoadEvent.FINISHED and not self.favicon and not self.running:
+			self.favicon = "applications-internet" # Fallback icon
+	
+	def __UGLY_favicon_changed(self, view, event):
+		""" Called by our ugly workaround to get the favicon. """
+
+		# The following is a workaround and then it's UGLY AS HELL.
+		# Please do not take example from the following code.
+		# If you are a real programmer, please stop reading here.
+		# YOU HAVE BEEN WARNED.
+				
+		self.running = True
+		
+		favi = view.get_favicon()
+		
+		# write favicon
+		name = self.url
+		if name[-1:] == "/":
+			# Remove last char if it is "/"
+			name = name[:-1]
+			
+		name = net.remove_protocol(name)
+		name = name.replace('/','.')
+		iconstr = FAVICONDIR + name + ".png"
+		
+		favi.write_to_png(iconstr)
+		
+		self.favicon = iconstr
+		self.running = False
+
+	def getFaviconOld(self,url):
 		""" Try to get favicon from website """
 
 		if url[-1:] == "/":
@@ -102,9 +174,13 @@ class addapp:
 				f.write(icon.read())
 
 			# Convert favicon to png
-			img = Image.open(icostr)
-			img.convert('RGBA')
-			img.save(pngstr)
+			try:
+				img = Image.open(icostr)
+				img.convert('RGBA')
+				img.save(pngstr)
+			except IOError:
+				# Something went wrong :(
+				return "applications-internet"
 
 			return pngstr
 
@@ -186,7 +262,7 @@ class addapp:
 
 		with open(os.path.join(DESKTOPDIR, "oneslip-" + name +".desktop"), "w") as target:
 
-			execute = "oneslip " + url + " " + size
+			execute = "oneslip %(url)s %(size)s %(name)s" % {"url":url, "size":size, "name":name}
 
 			target.write("""[Desktop Entry]
 Version=1.0

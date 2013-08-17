@@ -44,10 +44,11 @@ def generate_tree(directory, where):
 generate_tree("frontend", "/usr/share/oneslip")
 generate_tree("applications", "/usr/share/oneslip")
 generate_tree("lib", "/usr/share/oneslip")
+tree.append(("/usr/share/applications", ["oneslip-add-app.desktop"]))
 
 setup(name='oneslip',
-	version='1.0.0',
-	description='Debian-based distributions development utilities',
+	version='1.0.1',
+	description='python WebKit2 web applications viewer',
 	author='Giuseppe Corti and the Semplice Team',
 	author_email='giuseppe@infiniteloop.pro',
 	url='http://github.com/semplice/oneslip',

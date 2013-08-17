@@ -155,6 +155,8 @@ class addappgui():
 		cell = Gtk.CellRendererText()
 		self.cat_combo.pack_start(cell, True)
 		self.cat_combo.add_attribute(cell, "text", 0)
+		
+		self.cat_combo.set_active(0)
 
 	def status(self, type):
 		""" Status bar """
@@ -165,25 +167,25 @@ class addappgui():
 			self.image_status.set_from_icon_name("gtk-dialog-error", Gtk.IconSize(6))
 			self.label_status.set_text("Error: invalid inputs or server unreachable")
 
-		if type=="getfavicon":
+		elif type=="getfavicon":
 			self.eventbox.show()
 			self.eventbox.modify_bg(Gtk.StateType.NORMAL, Gdk.color_parse("#729fcf"))
 			self.image_status.set_from_icon_name("gtk-dialog-warning", Gtk.IconSize(6))
 			self.label_status.set_text("Trying to get favicon...")
 
-		if type=="errfavicon":
+		elif type=="errfavicon":
 			self.eventbox.show()
 			self.eventbox.modify_bg(Gtk.StateType.NORMAL, Gdk.color_parse("#F07568"))
 			self.image_status.set_from_icon_name("gtk-dialog-error", Gtk.IconSize(6))
 			self.label_status.set_text("Trying to get favicon...Failed!")
 
-		if type=="succfavicon":
+		elif type=="succfavicon":
 			self.eventbox.show()
 			self.eventbox.modify_bg(Gtk.StateType.NORMAL, Gdk.color_parse("#73d216"))
 			self.image_status.set_from_icon_name("gtk-info", Gtk.IconSize(6))
 			self.label_status.set_text("Trying to get favicon...Success!")
 
-		if type=="success":
+		elif type=="success":
 			self.eventbox.show()
 			self.eventbox.modify_bg(Gtk.StateType.NORMAL, Gdk.color_parse("#73d216"))
 			self.image_status.set_from_icon_name("gtk-info", Gtk.IconSize(6))
