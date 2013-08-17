@@ -44,6 +44,7 @@ def generate_tree(directory, where):
 generate_tree("frontend", "/usr/share/oneslip")
 generate_tree("applications", "/usr/share/oneslip")
 generate_tree("lib", "/usr/share/oneslip")
+tree.append(("/usr/share/applications", ["oneslip-add-app.desktop"]))
 
 setup(name='oneslip',
 	version='1.0.0',

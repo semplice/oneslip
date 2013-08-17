@@ -1,0 +1,9 @@
+[Desktop Entry]
+Version=1.0
+Name=Add web application
+Name[it_IT]=Aggiungi applicazione web
+Exec=oneslip-add-app gtk
+Terminal=false
+Type=Application
+Icon=applications-internet
+Categories=Application;Network;
