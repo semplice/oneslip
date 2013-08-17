@@ -47,8 +47,8 @@ generate_tree("lib", "/usr/share/oneslip")
 tree.append(("/usr/share/applications", ["oneslip-add-app.desktop"]))
 
 setup(name='oneslip',
-	version='1.0.0',
-	description='Debian-based distributions development utilities',
+	version='1.0.1',
+	description='python WebKit2 web applications viewer',
 	author='Giuseppe Corti and the Semplice Team',
 	author_email='giuseppe@infiniteloop.pro',
 	url='http://github.com/semplice/oneslip',
