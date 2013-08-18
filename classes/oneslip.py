@@ -113,10 +113,10 @@ class GUI():
 		if (decision.__info__ == WebKit2.NavigationPolicyDecision.__info__ and decision.get_navigation_type() == WebKit2.NavigationType.LINK_CLICKED) and (
 			decision_type == WebKit2.PolicyDecisionType.NAVIGATION_ACTION):
 			urlz = decision.get_request().get_uri()
-			baseurlz = urlz.replace("http://","").replace("file://","").replace("https://","").replace("www.").split("/")[0]
+			baseurlz = urlz.replace("http://","").replace("file://","").replace("https://","").replace("www.","").split("/")[0]
 
 			# Check if we are already at the same website
-			if not baseurlz.startswith(self.baseurl.replace("www.")):
+			if not baseurlz.startswith(self.baseurl.replace("www.","")):
 				spawn = True
 		elif decision_type == WebKit2.PolicyDecisionType.NEW_WINDOW_ACTION:
 			# Always spawn on a new window
