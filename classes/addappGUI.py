@@ -28,6 +28,76 @@ ADDAPP_FE = os.path.join(os.path.dirname(os.path.realpath(__file__)), "../fronte
 
 GObject.threads_init()
 
+class SaveThread(threading.Thread):
+	def __init__(self, parent):
+		""" Initialize thread. """
+		
+		threading.Thread.__init__(self)
+		
+		self.parent = parent
+	
+	def run(self):
+		""" Run the thread. """
+
+		app = addapp.addapp() 
+
+		# Set window sensitive False
+		GObject.idle_add(self.parent.grid_inputs.set_sensitive, False)
+		GObject.idle_add(self.parent.dialog_action_area.set_sensitive, False)
+
+		# Get inputs
+		name = self.parent.name_entry.get_text()
+		url = self.parent.url_entry.get_text()
+		width = self.parent.width_entry.get_text()
+		height = self.parent.height_entry.get_text()
+		catree = self.parent.cat_combo.get_active_iter()
+
+		size = width+"x"+height
+
+		if catree != None:
+			model = self.parent.cat_combo.get_model()
+			cat = model[catree][0]
+		else:
+			GObject.idle_add(self.parent.status, "inputs")
+			GObject.idle_add(self.parent.grid_inputs.set_sensitive, True)
+			GObject.idle_add(self.parent.dialog_action_area.set_sensitive, True)
+
+			return False
+
+		if not app.check(name,url,size,3):
+			GObject.idle_add(self.parent.status, "inputs")
+			GObject.idle_add(self.parent.grid_inputs.set_sensitive, True)
+			GObject.idle_add(self.parent.dialog_action_area.set_sensitive, True)
+
+			return False
+
+		GObject.idle_add(self.parent.status, "getfavicon")
+
+		#GObject.idle_add(app.getFavicon, url)
+		
+		favicon = app.getFavicon(url)
+
+		if favicon == "applications-internet":
+			GObject.idle_add(self.parent.status, "errfavicon")
+		else:
+			GObject.idle_add(self.parent.status, "succfavicon")
+
+		time.sleep(1)
+		lst, dic = app.getcat()
+
+		# Get english name for the category
+		cateng = dic[cat]
+
+		if app.createdesktop(name,url,size,app.getTruecat(cateng),favicon):
+			GObject.idle_add(self.parent.status, "success")
+			GObject.idle_add(self.parent.grid_inputs.set_sensitive, True)
+			GObject.idle_add(self.parent.dialog_action_area.set_sensitive, True)
+
+		# close oneslip
+		time.sleep(1)
+		GObject.idle_add(self.parent.cancel)	
+
+
 class addappgui():
 	def __init__(self, donotshow=False):
 		
@@ -68,71 +138,13 @@ class addappgui():
 		self.eventbox.hide()
 
 		# Connect destroy
-		self.main.connect("destroy", lambda x: Gtk.main_quit())
+		self.main.connect("destroy", Gtk.main_quit)
 
 	def save(self, opt = None):
 		""" Verify the inputs and make the .desktop """
 
-		threading.Thread(target=self.save_thread).start()
-
-
-	def save_thread(self, opt = None):
-
-		app = addapp.addapp() 
-
-		# Set window sensitive False
-		GObject.idle_add(self.grid_inputs.set_sensitive, False)
-		GObject.idle_add(self.dialog_action_area.set_sensitive, False)
-
-		# Get inputs
-		name = self.name_entry.get_text()
-		url = self.url_entry.get_text()
-		width = self.width_entry.get_text()
-		height = self.height_entry.get_text()
-		catree = self.cat_combo.get_active_iter()
-
-		size =width+"x"+height
-
-		if catree != None:
-			model = self.cat_combo.get_model()
-			cat = model[catree][0]
-		else:
-			GObject.idle_add(self.status, "inputs")
-			GObject.idle_add(self.grid_inputs.set_sensitive, True)
-			GObject.idle_add(self.dialog_action_area.set_sensitive, True)
-
-			return False
-
-		if not app.check(name,url,size,3):
-			GObject.idle_add(self.status, "inputs")
-			GObject.idle_add(self.grid_inputs.set_sensitive, True)
-			GObject.idle_add(self.dialog_action_area.set_sensitive, True)
-
-			return False
-
-		GObject.idle_add(self.status, "getfavicon")
-
-		favicon = app.getFavicon(url)
-
-		if favicon == "applications-internet":
-			GObject.idle_add(self.status, "errfavicon")
-		else:
-			GObject.idle_add(self.status, "succfavicon")
-
-		time.sleep(1)
-		lst, dic = app.getcat()
-
-		# Get english name for the category
-		cateng = dic[cat]
-
-		if app.createdesktop(name,url,size,app.getTruecat(cateng),favicon):
-			GObject.idle_add(self.status, "success")
-			GObject.idle_add(self.grid_inputs.set_sensitive, True)
-			GObject.idle_add(self.dialog_action_area.set_sensitive, True)
-
-		# close oneslip
-		time.sleep(1)
-		Gtk.main_quit()		
+		clss = SaveThread(self)
+		clss.start()
 
 	def cancel(self, opt=None):
 		""" cancel """
