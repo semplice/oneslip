@@ -17,10 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from gi.repository import Gtk, GObject
-
 import classes.addapp
-import classes.addappGUI
 
 import os
 import sys
@@ -65,10 +62,10 @@ if __name__ == "__main__":
 
 		if addapp.createdesktop(name,url,size,addapp.getTruecat(categ),favicon):
 			print "Web application added to your menu"
-
-	if sys.argv[1]=="gtk":
-		# GTK interface 
-
+	elif sys.argv[1]=="gtk":
+		# GTK interface
+		import classes.addappGUI
+		from gi.repository import Gtk
+		
 		g = classes.addappGUI.addappgui()
-
 		Gtk.main()
