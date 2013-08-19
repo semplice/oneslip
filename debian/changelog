@@ -1,3 +1,18 @@
+oneslip (1.0.2-1) unstable; urgency=low
+
+  [ Giuseppe 'GsC_RuL3Z' Corti ]
+  * README.md update
+
+  [ Eugenio Paolantonio (g7) ]
+  * Fixed replace calls, my bad.
+  * Hopefully fixed add-app issues with threading
+  * add-app: finally reverting to the old but more reliable getFavicon method
+    (and make it prefer icon to shortcut-icon)
+  * tty users deserve oneslip-add-app usage without errors :)
+  * debian/control: oneslip: depend on python-gi-cairo.
+
+ -- Eugenio Paolantonio (g7) <me@medesimo.eu>  Mon, 19 Aug 2013 12:57:47 +0200
+
 oneslip (1.0.1-1) unstable; urgency=low
 
   [ Eugenio Paolantonio (g7) ]
