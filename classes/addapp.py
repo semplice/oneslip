@@ -25,10 +25,10 @@ import urllib2
 import network
 import time
 
-import t3rdparty.Win32IconImagePlugin
-
 from BeautifulSoup import BeautifulSoup 
 from PIL import Image
+
+import t3rdparty.Win32IconImagePlugin
 
 HOME = os.getenv("HOME")
 
@@ -104,6 +104,14 @@ class addapp:
 			# Convert favicon to png
 			try:
 				img = Image.open(icostr)
+				# Get highest resolution available
+				highestX = 0
+				highestY = 0
+				for res in img.info["sizes"]:
+					if res[0] > highestX:
+						highestX = res[0]
+						highestY = res[1]
+				img.size = (highestX, highestY)
 				img.convert('RGBA')
 				img.save(pngstr)
 			except IOError:
