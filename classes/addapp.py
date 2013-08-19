@@ -37,78 +37,8 @@ FAVICONDIR = os.path.join(HOME, ".oneslip/favicons/")
 
 net = network.Network()
 
-from gi.repository import WebKit2
-
 class addapp:
-	def getFavicon(self, url):
-		""" Try to get favicon from a website """
-		
-		# The following is a workaround and then it's UGLY AS HELL.
-		# Please do not take example from the following code.
-		# If you are a real programmer, please stop reading here.
-		# YOU HAVE BEEN WARNED.
-		
-		self.url = url
-		
-		self.favicon = None
-		self.running = False
-		
-		view = WebKit2.WebView()
-		context = view.get_context()
-		
-		context.set_favicon_database_directory(FAVICONDIR)
-
-		view.connect("load-changed", self.__UGLY_load_changed)
-		view.connect("notify::favicon", self.__UGLY_favicon_changed)
-		
-		# Load uri
-		view.load_uri(self.url)
-				
-		# Wait for the favicon
-		while not self.favicon or self.running:
-			time.sleep(0.1)
-		
-		return self.favicon
-
-	def __UGLY_load_changed(self, view, event):
-		""" Called by our ugly workaround to get the favicon. """
-
-		# The following is a workaround and then it's UGLY AS HELL.
-		# Please do not take example from the following code.
-		# If you are a real programmer, please stop reading here.
-		# YOU HAVE BEEN WARNED.
-						
-		if event == WebKit2.LoadEvent.FINISHED and not self.favicon and not self.running:
-			self.favicon = "applications-internet" # Fallback icon
-	
-	def __UGLY_favicon_changed(self, view, event):
-		""" Called by our ugly workaround to get the favicon. """
-
-		# The following is a workaround and then it's UGLY AS HELL.
-		# Please do not take example from the following code.
-		# If you are a real programmer, please stop reading here.
-		# YOU HAVE BEEN WARNED.
-				
-		self.running = True
-		
-		favi = view.get_favicon()
-		
-		# write favicon
-		name = self.url
-		if name[-1:] == "/":
-			# Remove last char if it is "/"
-			name = name[:-1]
-			
-		name = net.remove_protocol(name)
-		name = name.replace('/','.')
-		iconstr = FAVICONDIR + name + ".png"
-		
-		favi.write_to_png(iconstr)
-		
-		self.favicon = iconstr
-		self.running = False
-
-	def getFaviconOld(self,url):
+	def getFavicon(self,url):
 		""" Try to get favicon from website """
 
 		if url[-1:] == "/":
@@ -131,14 +61,12 @@ class addapp:
 		page = urllib2.urlopen(url)
 		soup = BeautifulSoup(page.read())
 
-		if soup.find("link", rel="shortcut icon"):
-			# Generic favicon
-			icon_link = soup.find("link", rel="shortcut icon")
-
-		elif soup.find("link", rel="icon"):
+		if soup.find("link", rel="icon"):
 			# Some website like github use rel="icon"
 			icon_link = soup.find("link", rel="icon")
-
+		elif soup.find("link", rel="shortcut icon"):
+			# Generic favicon
+			icon_link = soup.find("link", rel="shortcut icon")
 		else:
 
 			try:
