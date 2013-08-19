@@ -14,6 +14,7 @@ Depends: ${python:Depends},
  gir1.2-gtk-3.0,
  gir1.2-webkit2-3.0,
  python-gmenu,
+ python-gi-cairo,
  python-beautifulsoup,
  python-imaging
 Description: WebKit2-based web application viewer -- Main executable
